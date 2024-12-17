@@ -6,9 +6,9 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <div
-      className="flex flex-col min-h-screen bg-zinc-950 text-zinc-200"
+      className="flex flex-col min-h-screen bg-zinc-950"
       style={{
-        backgroundImage: `url('/background.svg')`, // Use the uploaded SVG
+        backgroundImage: `url('/background.svg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -33,23 +33,31 @@ export default function Home() {
               is designed to save time, reduce costs, and boost your
               fleet&apos;s efficiency.
             </p>
-            <div className='flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4'>
+            <div className='flex flex-col items-center space-y-6'>
               <Button
                 className={cn(
                   'h-12 px-6 py-3',
-                  'inline-block bg-transparent hover:bg-orange-700 border border-orange-600 text-white'
+                  'inline-block bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white font-semibold rounded-md transition duration-200'
                 )}
               >
                 Start a Free Trial
               </Button>
+
+              {/* Slick Separator */}
+              <div className="flex items-center justify-center space-x-4 text-zinc-400 text-sm md:text-base">
+                <span className="h-px w-16 bg-zinc-700"></span>
+                <span>log in if you already have an account</span>
+                <span className="h-px w-16 bg-zinc-700"></span>
+              </div>
+
               <Button
                 className={cn(
                   'h-12 px-6 py-3',
-                  'inline-block bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white'
+                  'inline-block bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white font-semibold rounded-md transition duration-200'
                 )}
                 variant='outline'
               >
-                Login
+                Log in
               </Button>
             </div>
           </div>
@@ -66,7 +74,7 @@ export default function Home() {
                 <li>
                   <Link
                     href='/privacy'
-                    className='text-sm text-zinc-400 hover:text-primary'
+                    className='text-sm text-zinc-400 hover:text-orange-600 transition-colors duration-200'
                   >
                     Privacy Policy
                   </Link>
@@ -74,7 +82,7 @@ export default function Home() {
                 <li>
                   <Link
                     href='/terms'
-                    className='text-sm text-zinc-400 hover:text-primary'
+                    className='text-sm text-zinc-400 hover:text-orange-600 transition-colors duration-200'
                   >
                     Terms of Service
                   </Link>
