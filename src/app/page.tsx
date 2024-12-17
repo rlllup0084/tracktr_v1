@@ -1,62 +1,87 @@
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Home() {
   return (
     <div
-      className='relative w-full min-h-screen flex flex-col justify-between overflow-hidden'
+      className="flex flex-col min-h-screen bg-zinc-950 text-zinc-200"
       style={{
-        background: `url("data:image/svg+xml,${encodeURIComponent(
-          `<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 1600 800'><rect fill='#000000' width='1600' height='800'/><g fill-opacity='0.07'><polygon  fill='#220000' points='1600 160 0 460 0 350 1600 50'/><polygon  fill='#440000' points='1600 260 0 560 0 450 1600 150'/><polygon  fill='#660000' points='1600 360 0 660 0 550 1600 250'/><polygon  fill='#880000' points='1600 460 0 760 0 650 1600 350'/><polygon  fill='#A00' points='1600 800 0 800 0 750 1600 450'/></g></svg>`
-        )}")`,
+        backgroundImage: `url('/background.svg')`, // Use the uploaded SVG
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Main Content */}
-      <main className='relative container mx-auto px-4 py-8 text-center space-y-6'>
-        <div className='space-y-4'>
-          {/* Logo */}
-          <div className='flex justify-center mt-5 mb-7'>
+      <main className='flex-grow'>
+        <section className='py-20 md:py-32'>
+          <div className='container mx-auto px-4 text-center'>
             <Image
-              src='logo.svg' // Replace with the actual path to your logo
+              src='/logo.svg'
               alt='TrackTr Logo'
-              width={170}
-              height={50}
-              priority
+              width={250}
+              height={40}
+              className='mx-auto mb-10'
             />
+            <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white'>
+              Simplified fleet management, amplified performance
+            </h1>
+            <p className='text-xl md:text-2xl text-zinc-300 max-w-3xl mx-auto mb-10'>
+              Streamline your fleet operations with smarter tools and actionable
+              insights. From real-time to predictive maintenance, our platform
+              is designed to save time, reduce costs, and boost your
+              fleet&apos;s efficiency.
+            </p>
+            <div className='flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4'>
+              <Button
+                className={cn(
+                  'h-12 px-6 py-3',
+                  'inline-block bg-transparent hover:bg-orange-700 border border-orange-600 text-white'
+                )}
+              >
+                Start a Free Trial
+              </Button>
+              <Button
+                className={cn(
+                  'h-12 px-6 py-3',
+                  'inline-block bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white'
+                )}
+                variant='outline'
+              >
+                Login
+              </Button>
+            </div>
           </div>
-
-          {/* Heading */}
-          <h1 className='text-4xl font-bold max-w-[500px] mx-auto'>
-            Simplified fleet management, amplified performance
-          </h1>
-
-          {/* Description */}
-          <p className='text-sm md:text-base font-light max-w-[400px] sm:max-w-[500px] mx-auto'>
-            Streamline your fleet operations with smarter tools and actionable
-            insights. From real-time tracking to predictive maintenance, our
-            platform is designed to save time, reduce costs, and boost your
-            fleet’s efficiency.
-          </p>
-        </div>
-
-        {/* Buttons */}
-        <div className='flex flex-row justify-center items-center space-x-2'>
-          <Button>Start a Free Trial</Button>
-          <Button>Login</Button>
-        </div>
+        </section>
       </main>
-
-      {/* Footer */}
-      <footer className='relative text-white py-4'>
-        <div className='container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm'>
-          <p>&copy; {new Date().getFullYear()} TrackTr. All rights reserved.</p>
-          <Button variant={'link'}>
-            <Link href={'#'}>Privacy Policy</Link>
-          </Button>
+      <footer className='py-8'>
+        <div className='container mx-auto px-4'>
+          <div className='flex flex-col md:flex-row justify-between items-center text-center'>
+            <p className='text-sm text-zinc-400'>
+              © {new Date().getFullYear()} TrackTr. All rights reserved.
+            </p>
+            <nav className='mt-4 md:mt-0'>
+              <ul className='flex space-x-4'>
+                <li>
+                  <Link
+                    href='/privacy'
+                    className='text-sm text-zinc-400 hover:text-primary'
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href='/terms'
+                    className='text-sm text-zinc-400 hover:text-primary'
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </footer>
     </div>
