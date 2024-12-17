@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ArrowRightIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -53,9 +54,10 @@ export default function Home() {
               <Button
                 className={cn(
                   'h-12 px-6 py-3',
-                  'inline-block bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white font-semibold rounded-md transition duration-200'
+                  'bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white font-semibold rounded-md transition duration-200'
                 )}
                 variant='outline'
+                effect="expandIcon" icon={ArrowRightIcon} iconPlacement="right"
               >
                 Log in
               </Button>
