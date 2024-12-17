@@ -47,7 +47,7 @@ export default function Home() {
               {/* Slick Separator */}
               <div className="flex items-center justify-center space-x-4 text-zinc-400 text-sm md:text-base">
                 <span className="h-px w-16 bg-zinc-700"></span>
-                <span>log in if you already have an account</span>
+                <span>if you already have an account</span>
                 <span className="h-px w-16 bg-zinc-700"></span>
               </div>
 
