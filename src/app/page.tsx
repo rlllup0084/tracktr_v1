@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <div
-      className="flex flex-col min-h-screen bg-zinc-950"
+      className='flex flex-col min-h-screen bg-zinc-950'
       style={{
         backgroundImage: `url('/background.svg')`,
         backgroundSize: 'cover',
@@ -36,30 +36,34 @@ export default function Home() {
             </p>
             <div className='flex flex-col items-center space-y-6'>
               <Button
+                asChild
                 className={cn(
                   'h-12 px-6 py-3',
                   'inline-block bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white font-semibold rounded-md transition duration-200'
                 )}
               >
-                Start a Free Trial
+                <Link href='/register'>Start a Free Trial</Link>
               </Button>
 
               {/* Slick Separator */}
-              <div className="flex items-center justify-center space-x-4 text-zinc-400 text-sm md:text-base">
-                <span className="h-px w-16 bg-zinc-700"></span>
+              <div className='flex items-center justify-center space-x-4 text-zinc-400 text-sm md:text-base'>
+                <span className='h-px w-16 bg-zinc-700'></span>
                 <span>if you already have an account</span>
-                <span className="h-px w-16 bg-zinc-700"></span>
+                <span className='h-px w-16 bg-zinc-700'></span>
               </div>
 
               <Button
+                asChild
                 className={cn(
                   'h-12 px-6 py-3',
                   'bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white font-semibold rounded-md transition duration-200'
                 )}
                 variant='outline'
-                effect="expandIcon" icon={ArrowRightIcon} iconPlacement="right"
+                effect='expandIcon'
+                icon={ArrowRightIcon}
+                iconPlacement='right'
               >
-                Log in
+                <Link href='/login'>Log in</Link>
               </Button>
             </div>
           </div>
