@@ -39,7 +39,7 @@ export default function Home() {
                 asChild
                 className={cn(
                   'h-12 px-6 py-3',
-                  'inline-block bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white font-semibold rounded-md transition duration-200'
+                  'inline-block text-md bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white font-semibold rounded-md transition duration-200'
                 )}
               >
                 <Link href='/register'>Start a Free Trial</Link>
@@ -56,7 +56,7 @@ export default function Home() {
                 asChild
                 className={cn(
                   'h-12 px-6 py-3',
-                  'bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white font-semibold rounded-md transition duration-200'
+                  'text-md bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white font-semibold rounded-md transition duration-200'
                 )}
                 variant='outline'
                 effect='expandIcon'

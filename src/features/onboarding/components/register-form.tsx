@@ -62,10 +62,10 @@ const RegisterForm = () => {
             alt='TrackTr Logo'
           />
         </Link>
-        <h1 className='text-3xl font-bold'>
-          Start your <br /> 14-day free trial of TrackTr
+        <h1 className='text-3xl font-bold pt-4'>
+        Start your free <br /> 15-day trial of TrackTr
         </h1>
-        <p className='text-zinc-400'>
+        <p className='text-zinc-400 pt-3'>
           Already have an account?{' '}
           <Link
             href={'/login'}
@@ -157,7 +157,7 @@ const RegisterForm = () => {
               </FormItem>
             )}
           />
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-start space-x-2 py-4'>
             <Checkbox
               id='terms'
               checked={acceptTerms}
@@ -184,13 +184,13 @@ const RegisterForm = () => {
             </label>
           </div>
           {!acceptTerms && form.formState.isSubmitted && (
-            <p className='text-sm text-destructive'>
+            <p className='text-sm text-[#FF1818]'>
               You must accept the terms and conditions.
             </p>
           )}
           <Button
             type='submit'
-            className='w-full'
+            className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             disabled={isLoading}
           >
             {isLoading ? 'Registering...' : 'Start Free Trial'}
@@ -207,27 +207,16 @@ const RegisterForm = () => {
           </span>
         </div>
       </div>
-      <Button variant='outline' className='w-full'>
-        <svg
-          className='mr-2 h-4 w-4'
-          aria-hidden='true'
-          focusable='false'
-          data-prefix='fab'
-          data-icon='google'
-          role='img'
-          xmlns='http://www.w3.org/2000/svg'
-          viewBox='0 0 488 512'
-        >
-          <path
-            fill='currentColor'
-            d='M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z'
-          ></path>
-        </svg>
+      <Button
+        variant='outline'
+        className='w-full h-12 px-6 py-3 bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white text-md font-semibold rounded-md transition duration-200'
+      >
+        <Image src={'/google-icon.svg'} width={24} height={24} alt='google' />
         Sign up with Google
       </Button>
       <p className='text-xs text-center text-muted-foreground'>
         Want to join an existing account? The account owner or administrator
-        must invite you to join their account.
+        must invite you to join.
       </p>
     </div>
   );
