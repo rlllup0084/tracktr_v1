@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import React, { useEffect, useRef } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
@@ -33,66 +33,73 @@ const FeaturesCarousel: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-full">
-      <Carousel
-        plugins={[plugin.current]}
-        className="w-full h-full"
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
-      >
-        <CarouselContent className="h-full">
-          {features.map((feature: Feature, index: number) => (
-            <CarouselItem key={index} className="w-full sm:w-64 md:w-80 h-full">
-              <div className="relative h-full overflow-hidden">
-                {/* Background Image */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${feature.image})` }}
-                >
-                  <div className="absolute inset-0 bg-black/60" />
-                </div>
+    <div className="h-full w-full relative">
+      {/* Background Section */}
+      <div className="absolute inset-0">
+        <Carousel
+          plugins={[plugin.current]}
+          className="h-full w-full flex flex-col justify-end"
+          onMouseEnter={plugin.current.stop}
+          onMouseLeave={plugin.current.reset}
+        >
+          {/* Carousel Content */}
+          <CarouselContent className="h-auto w-full">
+            {features.map((feature: Feature, index: number) => (
+              <CarouselItem
+                key={index}
+                className="h-auto w-full flex items-center justify-center"
+              >
+                <div className="relative h-full w-full overflow-hidden">
+                  {/* Background Image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${feature.image})` }}
+                  >
+                    <div className="absolute inset-0 bg-black/60" />
+                  </div>
 
-                {/* Content */}
-                <div className="relative h-full flex flex-col justify-end p-8 md:p-12">
-                  <div className="max-w-xl space-y-4">
-                    {/* Icon */}
-                    {feature.icon && (
-                      <feature.icon className="w-12 h-12 text-primary mb-6" />
-                    )}
+                  {/* Content */}
+                  <div className="relative h-full flex flex-col justify-end p-8 md:p-12">
+                    <div className="max-w-xl space-y-4">
+                      {/* Icon */}
+                      {feature.icon && (
+                        <feature.icon className="w-12 h-12 text-primary mb-6" />
+                      )}
 
-                    {/* Text Content */}
-                    <blockquote className="text-2xl md:text-3xl font-medium text-white mb-6">
-                      {feature.description}
-                    </blockquote>
+                      {/* Text Content */}
+                      <blockquote className="text-2xl md:text-3xl font-medium text-white mb-6">
+                        {feature.description}
+                      </blockquote>
 
-                    {/* Author */}
-                    <div className="space-y-1">
-                      <div className="text-lg font-semibold text-white">
-                        {feature.author}
-                      </div>
-                      <div className="text-sm text-gray-300">
-                        {feature.role}
+                      {/* Author */}
+                      <div className="space-y-1">
+                        <div className="text-lg font-semibold text-white">
+                          {feature.author}
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          {feature.role}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
 
-        {/* Navigation Arrows */}
-        <div className="absolute bottom-0 right-0 flex gap-2">
-          <CarouselPrevious
-            aria-label="Previous Feature"
-            className="h-8 w-8 rounded-full"
-          />
-          <CarouselNext
-            aria-label="Next Feature"
-            className="h-8 w-8 rounded-full"
-          />
-        </div>
-      </Carousel>
+          {/* Navigation Arrows */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+            <CarouselPrevious
+              aria-label="Previous Feature"
+              className="h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center"
+            />
+            <CarouselNext
+              aria-label="Next Feature"
+              className="h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center"
+            />
+          </div>
+        </Carousel>
+      </div>
     </div>
   );
 };
