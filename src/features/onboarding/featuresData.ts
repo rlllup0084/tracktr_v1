@@ -15,7 +15,7 @@ export const features: Feature[] = [
     description:
       "Our customers report an average of 35% improvement in fleet efficiency using TrackTr's real-time monitoring system",
     icon: Truck,
-    image: '/placeholder.svg?height=600&width=800',
+    image: '/carousel/carousel_1.jpg',
     author: 'Michael Chen',
     role: 'Fleet Manager, LogiTech Solutions',
   },
@@ -24,7 +24,7 @@ export const features: Feature[] = [
     description:
       "TrackTr's predictive maintenance has helped reduce our vehicle downtime by 45% in the first quarter",
     icon: Wrench,
-    image: '/placeholder.svg?height=600&width=800',
+    image: '/carousel/carousel_2.jpg',
     author: 'Sarah Johnson',
     role: 'Operations Director, FastFreight Inc',
   },
@@ -33,7 +33,7 @@ export const features: Feature[] = [
     description:
       "We've seen a 25% reduction in fuel costs since implementing TrackTr's fuel management system",
     icon: Fuel,
-    image: '/placeholder.svg?height=600&width=800',
+    image: '/carousel/carousel_3.jpg',
     author: 'David Martinez',
     role: 'CEO, EcoTransport',
   },
@@ -42,7 +42,7 @@ export const features: Feature[] = [
     description:
       "TrackTr's safety scoring system has helped us reduce incident rates by 60% year over year",
     icon: Shield,
-    image: '/placeholder.svg?height=600&width=800',
+    image: '/carousel/carousel_4.jpg',
     author: 'Emma Wilson',
     role: 'Safety Director, SecureFleet',
   },
@@ -51,7 +51,7 @@ export const features: Feature[] = [
     description:
       "Our delivery times improved by 30% with TrackTr's AI-powered route optimization",
     icon: Map,
-    image: '/placeholder.svg?height=600&width=800',
+    image: '/carousel/carousel_5.jpg',
     author: 'James Thompson',
     role: 'Logistics Manager, SpeedRoute Delivery',
   },
