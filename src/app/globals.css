@@ -86,3 +86,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  input:-webkit-autofill {
+    @apply bg-blue-50 text-blue-800 border-blue-300 shadow-inner;
+  }
+
+  input:-webkit-autofill:focus {
+    @apply bg-white text-black border-blue-500 shadow-lg;
+  }
+}
