@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
 
@@ -63,7 +63,7 @@ const RegisterForm = () => {
           />
         </Link>
         <h1 className='text-3xl font-bold pt-4'>
-        Start your free <br /> 15-day trial of TrackTr
+          Start your free <br /> 15-day trial of TrackTr
         </h1>
         <p className='text-zinc-400 pt-3'>
           Already have an account?{' '}
@@ -157,43 +157,54 @@ const RegisterForm = () => {
               </FormItem>
             )}
           />
-          <div className='flex items-start space-x-2 py-4'>
-            <Checkbox
-              id='terms'
-              checked={acceptTerms}
-              onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-            />
-            <label
-              htmlFor='terms'
-              className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-            >
-              I accept the{' '}
-              <Link
-                href='/terms'
-                className='underline underline-offset-4 hover:text-primary'
+          <div>
+            <div className='flex items-start space-x-2 pt-4 pb-2'>
+              <Checkbox
+                id='terms'
+                checked={acceptTerms}
+                onCheckedChange={(checked) =>
+                  setAcceptTerms(checked as boolean)
+                }
+              />
+              <label
+                htmlFor='terms'
+                className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
               >
-                terms of service
-              </Link>{' '}
-              and{' '}
-              <Link
-                href='/privacy'
-                className='underline underline-offset-4 hover:text-primary'
-              >
-                privacy policy
-              </Link>
-            </label>
+                I accept the{' '}
+                <Link
+                  href='/terms'
+                  className='underline underline-offset-4 hover:text-primary'
+                >
+                  terms of service
+                </Link>{' '}
+                and{' '}
+                <Link
+                  href='/privacy'
+                  className='underline underline-offset-4 hover:text-primary'
+                >
+                  privacy policy
+                </Link>
+              </label>
+            </div>
+            {!acceptTerms && form.formState.isSubmitted && (
+              <p className='text-sm text-[#FF1818]'>
+                You must accept the terms and conditions.
+              </p>
+            )}
           </div>
-          {!acceptTerms && form.formState.isSubmitted && (
-            <p className='text-sm text-[#FF1818]'>
-              You must accept the terms and conditions.
-            </p>
-          )}
           <Button
             type='submit'
             className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             disabled={isLoading}
           >
-            {isLoading ? 'Registering...' : 'Start Free Trial'}
+            {isLoading ? (
+              <>
+                <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                Registering...
+              </>
+            ) : (
+              'Start Free Trial'
+            )}
           </Button>
         </form>
       </Form>
