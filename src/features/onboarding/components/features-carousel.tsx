@@ -85,11 +85,11 @@ const FeaturesCarousel = () => {
         <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 mb-2'>
           <CarouselPrevious
             aria-label='Previous Feature'
-            className='h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center'
+            className='h-8 w-8 rounded-full bg-zinc-950/50 hover:bg-zinc-800 border-zinc-700 text-white flex items-center justify-center transition duration-200'
           />
           <CarouselNext
             aria-label='Next Feature'
-            className='h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center'
+            className='h-8 w-8 rounded-full bg-zinc-950/50 hover:bg-zinc-800 border-zinc-700 text-white flex items-center justify-center transition duration-200'
           />
         </div>
       </Carousel>
