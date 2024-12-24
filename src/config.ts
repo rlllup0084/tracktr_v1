@@ -1,0 +1,2 @@
+export const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
+export const ACCOUNTS_ID = process.env.NEXT_PUBLIC_APPWRITE_ACCOUNTS_ID!;
