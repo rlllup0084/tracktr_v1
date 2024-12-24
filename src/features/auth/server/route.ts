@@ -22,15 +22,22 @@ const app = new Hono()
     const { email, password } = c.req.valid('json');
 
     const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(email, password);
 
-    setCookie(c, AUTH_COOKIE, session.secret, {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 30,
-    });
+    try {
+      const session = await account.createEmailPasswordSession(email, password);
+
+      setCookie(c, AUTH_COOKIE, session.secret, {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    } catch (error) {
+      if ((error as AppwriteException).type === 'user_invalid_credentials') {
+        return c.json({ success: false, message: 'Invalid credentials' }, 401);
+      }
+    }
 
     return c.json({ success: true });
   })
@@ -78,7 +85,7 @@ const app = new Hono()
         await account.createSession(user.$id, otp);
       } catch (error) {
         if ((error as AppwriteException).type === 'user_invalid_token') {
-            return c.json({ success: false, message: 'Invalid OTP' }, 401);
+          return c.json({ success: false, message: 'Invalid OTP' }, 401);
         }
       }
 
@@ -86,10 +93,12 @@ const app = new Hono()
       try {
         await users.updateEmailVerification(
           user.$id, // userId
-          true, // emailVerification
+          true // emailVerification
         );
       } catch (error) {
-        if ((error as AppwriteException).type === 'general_unauthorized_scope') {
+        if (
+          (error as AppwriteException).type === 'general_unauthorized_scope'
+        ) {
           console.error('Unauthorized scope');
         }
       }
