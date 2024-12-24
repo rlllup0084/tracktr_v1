@@ -16,7 +16,11 @@ const app = new Hono()
 
     const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID);
 
-    return c.json({ data: accounts });
+    if (accounts.documents.length > 0) {
+      return c.json(accounts.documents[0]);
+    } else {
+      return c.json({ message: "Account not yet created" });
+    }
   })
   .post(
     '/',
@@ -111,7 +115,7 @@ const app = new Hono()
   )
   //   VIN Decoder provided by Auto Dev auto.dev
   .patch(
-    '/:accountId/vin-decoder',
+    '/:accountId/vin_decoder',
     zValidator('json', updateVinDecoderSchema),
     sessionMiddleware,
     async (c) => {
