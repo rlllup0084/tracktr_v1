@@ -62,7 +62,7 @@ const app = new Hono()
 
     return c.json({ success: true });
   })
-  .post('/send-otp', zValidator('json', sendOtpSchema), async (c) => {
+  .post('/send_otp', zValidator('json', sendOtpSchema), async (c) => {
     const { email } = c.req.valid('json');
 
     const { account } = await createAdminClient();
@@ -72,7 +72,7 @@ const app = new Hono()
     return c.json({ success: true });
   })
   .post(
-    '/verify-otp',
+    '/verify_otp',
     sessionMiddleware,
     zValidator('json', verifyOtpSchema),
     async (c) => {
