@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +48,7 @@ const RegisterForm = () => {
     console.log({ ...values, acceptTerms });
     setIsLoading(false);
     // Here you would typically send the data to your API
+    toast("Event has been created.")
   };
 
   return (
