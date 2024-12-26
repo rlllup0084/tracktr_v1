@@ -6,13 +6,12 @@ import { redirect } from 'next/navigation';
 const RegisterPage = async () => {
   const user = await getCurrent();
 
-  // If user is not null and user.emailVerification is false, then redirect to verify email page
   if (user && !user.emailVerification) {
     redirect('/verify-email');
   }
 
   return (
-    <div className='flex max-w-7xl m-auto min-h-screen text-white'>
+    <div className='flex max-w-7xl m-auto min-h-[calc(100vh-4rem)] text-white'>
       {/* Left split */}
       <div className='flex flex-col justify-center w-full lg:w-1/2 p-6 lg:p-12'>
         <RegisterForm />
