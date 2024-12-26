@@ -46,7 +46,16 @@ const app = new Hono()
     const name = `${firstName} ${lastName}`;
 
     const { account } = await createAdminClient();
-    await account.create(ID.unique(), email, password, name);
+
+    try {
+      await account.create(ID.unique(), email, password, name);
+    } catch (error) {
+      if (
+        (error as AppwriteException).type === 'user_already_exists'
+      ) {
+        return c.json({ success: false, message: 'A user with the email address already exists' }, 409);
+      }
+    }
 
     const session = await account.createEmailPasswordSession(email, password);
 
@@ -60,7 +69,7 @@ const app = new Hono()
 
     await account.createEmailToken(ID.unique(), email);
 
-    return c.json({ success: true });
+    return c.json({ success: true, message: 'User successfully registered' });
   })
   .post('/send_otp', zValidator('json', sendOtpSchema), async (c) => {
     const { email } = c.req.valid('json');

@@ -20,12 +20,13 @@ import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { useRegister } from '@/features/auth/api/use-register';
 
 const RegisterForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  const { mutate, isPending } = useRegister();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -39,16 +40,9 @@ const RegisterForm = () => {
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     if (!acceptTerms) {
-      // Show error message for terms
       return;
     }
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log({ ...values, acceptTerms });
-    setIsLoading(false);
-    // Here you would typically send the data to your API
-    toast("Event has been created.")
+    mutate({ json: values });
   };
 
   return (
@@ -197,9 +191,9 @@ const RegisterForm = () => {
           <Button
             type='submit'
             className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
-            disabled={isLoading}
+            disabled={isPending}
           >
-            {isLoading ? (
+            {isPending ? (
               <>
                 <Loader2 className='mr-2 h-5 w-5 animate-spin' />
                 Registering...
