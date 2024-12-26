@@ -8,13 +8,16 @@ import {
   updateTraccarIntegrationSchema,
   updateVinDecoderSchema,
 } from '../schema';
-import { ID } from 'node-appwrite';
+import { ID, Query } from 'node-appwrite';
 
 const app = new Hono()
   .get('/', sessionMiddleware, async (c) => {
     const databases = c.get('databases');
+    const user = c.get("user");
 
-    const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID);
+    const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID,
+      [Query.equal("owner", user.$id)]
+    );
 
     if (accounts.documents.length > 0) {
       return c.json(accounts.documents[0]);
@@ -28,6 +31,7 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
+      const user = c.get("user");
       const {
         company_name,
         fleet_size,
@@ -59,6 +63,7 @@ const app = new Hono()
           company_role,
           enable_demo_data,
           trial_expiry_date: trialExpiryDate.toISOString(),
+          owner: user.$id,
         }
       );
 
@@ -71,9 +76,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
+      const user = c.get("user");
       const { trial_expiry_date, asset_limit } = c.req.valid('json');
 
       const { accountId } = c.req.param();
+
+      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+
+      if (account.owner !== user.$id) {
+        return c.json({ error: 'Unauthorized' }, 403);
+      }
 
       const accounts = await databases.updateDocument(
         DATABASE_ID,
@@ -94,9 +106,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
+      const user = c.get("user");
       const { traccar_api_url, username, password } = c.req.valid('json');
 
       const { accountId } = c.req.param();
+
+      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+
+      if (account.owner !== user.$id) {
+        return c.json({ error: 'Unauthorized' }, 403);
+      }
 
       const accounts = await databases.updateDocument(
         DATABASE_ID,
@@ -120,9 +139,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
+      const user = c.get("user");
       const { vin_decoder_key } = c.req.valid('json');
 
       const { accountId } = c.req.param();
+
+      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+
+      if (account.owner !== user.$id) {
+        return c.json({ error: 'Unauthorized' }, 403);
+      }
 
       const accounts = await databases.updateDocument(
         DATABASE_ID,
