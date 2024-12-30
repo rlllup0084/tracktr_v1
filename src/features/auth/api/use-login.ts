@@ -5,8 +5,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof client.api.auth.login["$post"]>;
-type RequestType = InferRequestType<typeof client.api.auth.login["$post"]>;
+type ResponseType = InferResponseType<(typeof client.api.auth.login)["$post"]>;
+type RequestType = InferRequestType<(typeof client.api.auth.login)["$post"]>;
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -21,19 +21,20 @@ export const useLogin = () => {
       const response = await client.api.auth.login["$post"]({ json });
 
       if (!response.ok) {
-        throw new Error("Failed to login");
+        const errorDetails = await response.json();
+        toast.error(`Failed to register`, { description: errorDetails.message });
       }
 
       return await response.json();
     },
     onSuccess: () => {
-      toast.success("Logged in");
+      toast.success("User successfully logged in");
       router.refresh();
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
-    onError: () => {
-      toast.error("Failed to log in");
-    },
+    // onError: () => {
+    //   toast.error("Failed to log in");
+    // },
   });
 
   return mutation;

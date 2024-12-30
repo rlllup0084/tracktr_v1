@@ -19,7 +19,7 @@ const app = new Hono()
     return c.json({ data: user });
   })
   .post('/login', zValidator('json', loginSchema), async (c) => {
-    const { email, password } = c.req.valid('json');
+    const { email, password, rememberMe } = c.req.valid('json');
 
     const { account } = await createAdminClient();
 
@@ -31,15 +31,18 @@ const app = new Hono()
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
       });
+
     } catch (error) {
-      if ((error as AppwriteException).type === 'user_invalid_credentials') {
-        return c.json({ success: false, message: 'Invalid credentials' }, 401);
+      if (
+        (error as AppwriteException).type === 'user_invalid_credentials'
+      ) {
+        return c.json({ success: false, message: 'Invalid email or password' }, 401);
       }
     }
 
-    return c.json({ success: true });
+    return c.json({ success: true, message: 'User successfully logged in' });
   })
   .post('/register', zValidator('json', registerSchema), async (c) => {
     const { firstName, lastName, email, password } = c.req.valid('json');

@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const loginSchema = z.object({
   email: z.string().nonempty({ message: 'Email is required.' }),
   password: z.string().nonempty({ message: 'Password is required.' }),
+  rememberMe: z.boolean().default(false),
 });
 
 export const sendOtpSchema = z.object({

@@ -32,7 +32,7 @@ export const useRegister = () => {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success('Registered');
+      toast.success('User successfully registered');
       router.refresh();
       queryClient.invalidateQueries({ queryKey: ['current'] });
     },
