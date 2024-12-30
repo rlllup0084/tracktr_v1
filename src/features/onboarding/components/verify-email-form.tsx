@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useSendOtp } from '@/features/auth/api/use-send-otp';
 import { useVerifyOtp } from '@/features/auth/api/use-verify-otp';
@@ -38,22 +38,7 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
     },
   });
 
-  const handleCodeChange = (index: number, value: string) => {
-    if (value.length <= 1) {
-      const newCode = [...code];
-      newCode[index] = value;
-      setCode(newCode);
-
-      // Auto-focus next input
-      if (value && index < 5) {
-        const nextInput = document.getElementById(`code-${index + 1}`);
-        nextInput?.focus();
-      }
-    }
-  };
-
   const onSubmit = async (values: z.infer<typeof verifyOtpSchema>) => {
-    console.log(values);
     verifyOtp({ json: values });
   };
 
@@ -92,19 +77,41 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
             className='mt-8 space-y-6'
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <div className='flex justify-center space-x-2 sm:space-x-4'>
-              {code.map((digit, index) => (
-                <Input
-                  key={index}
-                  id={`code-${index}`}
-                  type='text'
-                  maxLength={1}
-                  className='h-16 w-14 text-center md:text-2xl'
-                  value={digit}
-                  onChange={(e) => handleCodeChange(index, e.target.value)}
-                />
-              ))}
-            </div>
+            <FormField
+              control={form.control}
+              name='otp'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className='flex justify-center space-x-2 sm:space-x-4'>
+                      {[0, 1, 2, 3, 4, 5].map((index) => (
+                        <Input
+                          key={index}
+                          type='text'
+                          inputMode='numeric'
+                          maxLength={1}
+                          className='h-16 w-14 text-center md:text-2xl'
+                          value={code[index]}
+                          onChange={(e) => {
+                            const newCode = [...code];
+                            newCode[index] = e.target.value;
+                            setCode(newCode);
+                            field.onChange(newCode.join(''));
+                            if (e.target.value && index < 5) {
+                              const nextInput = document.getElementById(
+                                `code-${index + 1}`
+                              );
+                              nextInput?.focus();
+                            }
+                          }}
+                          id={`code-${index}`}
+                        />
+                      ))}
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <Button
               type='submit'
               className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
