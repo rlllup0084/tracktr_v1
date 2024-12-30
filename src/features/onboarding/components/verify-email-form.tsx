@@ -7,20 +7,36 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useSendOtp } from '@/features/auth/api/use-send-otp';
+import { useVerifyOtp } from '@/features/auth/api/use-verify-otp';
+import { sendOtpSchema, verifyOtpSchema } from '@/features/auth/schemas';
 import { cn } from '@/lib/utils';
-import { ArrowLeftIcon } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeftIcon, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { Models } from 'node-appwrite';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface VerifyEmailFormProps {
   user: Models.User<Models.Preferences> | null;
 }
 
 const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '', '', '']);
+
+  const { mutate: resendOtp, isPending: isResendingOtp } = useSendOtp();
+  const { mutate: verifyOtp, isPending: isVerifyingOtp } = useVerifyOtp();
+
+  const form = useForm<z.infer<typeof verifyOtpSchema>>({
+    resolver: zodResolver(verifyOtpSchema),
+    defaultValues: {
+      otp: '',
+    },
+  });
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length <= 1) {
@@ -29,18 +45,20 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
       setCode(newCode);
 
       // Auto-focus next input
-      if (value && index < 3) {
+      if (value && index < 5) {
         const nextInput = document.getElementById(`code-${index + 1}`);
         nextInput?.focus();
       }
     }
   };
 
-  const router = useRouter();
+  const onSubmit = async (values: z.infer<typeof verifyOtpSchema>) => {
+    console.log(values);
+    verifyOtp({ json: values });
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push('/onboarding/company');
+  const handleResend = async (values: z.infer<typeof sendOtpSchema>) => {
+    resendOtp({ json: values });
   };
 
   return (
@@ -69,33 +87,60 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <form className='mt-8 space-y-6' onSubmit={handleSubmit}>
-          <div className='flex justify-center space-x-2 sm:space-x-4'>
-            {code.map((digit, index) => (
-              <Input
-                key={index}
-                id={`code-${index}`}
-                type='text'
-                maxLength={1}
-                className='h-20 w-20 text-center md:text-5xl'
-                value={digit}
-                onChange={(e) => handleCodeChange(index, e.target.value)}
-              />
-            ))}
-          </div>
-          <Button
-            type='submit'
-            className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
+        <Form {...form}>
+          <form
+            className='mt-8 space-y-6'
+            onSubmit={form.handleSubmit(onSubmit)}
           >
-            Verify email
-          </Button>
-        </form>
+            <div className='flex justify-center space-x-2 sm:space-x-4'>
+              {code.map((digit, index) => (
+                <Input
+                  key={index}
+                  id={`code-${index}`}
+                  type='text'
+                  maxLength={1}
+                  className='h-16 w-14 text-center md:text-2xl'
+                  value={digit}
+                  onChange={(e) => handleCodeChange(index, e.target.value)}
+                />
+              ))}
+            </div>
+            <Button
+              type='submit'
+              className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
+              disabled={isVerifyingOtp}
+            >
+              {isVerifyingOtp ? (
+                <>
+                  <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                  Verifying...
+                </>
+              ) : (
+                'Verify email'
+              )}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
       <CardFooter className='flex flex-col space-y-4'>
         <div className='text-center'>
           <p className='text-sm sm:text-base text-zinc-400'>
             Didn&apos;t receive the code?{' '}
-            <Button variant={'link'}>Click to resend</Button>
+            <Button
+              type='button'
+              variant={'link'}
+              onClick={() => handleResend({ email: user?.email || '' })}
+              disabled={isResendingOtp}
+            >
+              {isResendingOtp ? (
+                <>
+                  <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                  Resending...
+                </>
+              ) : (
+                'Click to resend'
+              )}
+            </Button>
           </p>
           <p className='mt-2 text-xs sm:text-sm text-zinc-400'>
             Make sure to check your spam or junk folder if you don&apos;t see it
@@ -104,10 +149,10 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
         </div>
         {/* Slick Separator */}
         <div className='flex items-center justify-center space-x-4 text-zinc-400 text-sm md:text-base'>
-                <span className='h-px w-16 bg-zinc-700'></span>
-                <span>if this account is not yours</span>
-                <span className='h-px w-16 bg-zinc-700'></span>
-              </div>
+          <span className='h-px w-16 bg-zinc-700'></span>
+          <span>if this account is not yours</span>
+          <span className='h-px w-16 bg-zinc-700'></span>
+        </div>
         <div>
           <Button
             className={cn(
