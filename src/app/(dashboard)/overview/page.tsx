@@ -1,4 +1,4 @@
-export const OverviewPage = () => {
+const OverviewPage = () => {
   return (
     <div>
       <h1>Overview</h1>

@@ -1,10 +1,18 @@
 import { Button } from '@/components/ui/button';
+import { getCurrent } from '@/features/auth/queries';
 import { cn } from '@/lib/utils';
 import { ArrowRightIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+const Home = async () => {
+  const user = await getCurrent();
+
+  if (user) {
+    redirect(user.emailVerification ? '/tracking' : '/verify-email');
+  }
+
   return (
     <div
       className='flex flex-col min-h-screen bg-zinc-950'
@@ -100,4 +108,6 @@ export default function Home() {
       </footer>
     </div>
   );
-}
+};
+
+export default Home;

@@ -6,8 +6,8 @@ import { redirect } from 'next/navigation';
 const RegisterPage = async () => {
   const user = await getCurrent();
 
-  if (user && !user.emailVerification) {
-    redirect('/verify-email');
+  if (user) {
+    redirect(user.emailVerification ? '/tracking' : '/verify-email');
   }
 
   return (
