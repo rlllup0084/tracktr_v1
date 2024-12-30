@@ -5,10 +5,11 @@ import { redirect } from 'next/navigation';
 
 const LoginPage = async () => {
   const user = await getCurrent();
+
+  if (user && !user.emailVerification) {
+    redirect('/verify-email');
+  }
   
-    if (user && !user.emailVerification) {
-      redirect('/verify-email');
-    }
   return (
     <div className='flex max-w-7xl m-auto min-h-[calc(100vh-4rem)] text-white'>
       {/* Left split */}

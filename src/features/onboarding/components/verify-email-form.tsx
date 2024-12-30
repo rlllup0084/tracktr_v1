@@ -44,6 +44,7 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
 
   const handleResend = async (values: z.infer<typeof sendOtpSchema>) => {
     resendOtp({ json: values });
+    setCode(['', '', '', '', '', '']);
   };
 
   return (
@@ -139,14 +140,7 @@ const VerifyEmailForm = ({ user }: VerifyEmailFormProps) => {
               onClick={() => handleResend({ email: user?.email || '' })}
               disabled={isResendingOtp}
             >
-              {isResendingOtp ? (
-                <>
-                  <Loader2 className='mr-2 h-5 w-5 animate-spin' />
-                  Resending...
-                </>
-              ) : (
-                'Click to resend'
-              )}
+              {isResendingOtp ? <>Resending...</> : 'Click to resend'}
             </Button>
           </p>
           <p className='mt-2 text-xs sm:text-sm text-zinc-400'>
