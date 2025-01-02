@@ -8,21 +8,29 @@ import {
   updateTraccarIntegrationSchema,
   updateVinDecoderSchema,
 } from '../schema';
-import { ID, Query } from 'node-appwrite';
+import { AppwriteException, ID, Query } from 'node-appwrite';
 
 const app = new Hono()
   .get('/', sessionMiddleware, async (c) => {
     const databases = c.get('databases');
     const user = c.get("user");
 
-    const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID,
-      [Query.equal("owner", user.$id)]
-    );
-
-    if (accounts.documents.length > 0) {
-      return c.json(accounts.documents[0]);
-    } else {
-      return c.json({ message: "Account not yet created" });
+    try {
+      const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID,
+        [Query.equal("owner", user.$id)]
+      );
+  
+      if (accounts.documents.length > 0) {
+        return c.json(accounts.documents[0]);
+      } else {
+        return c.json({ message: "Account not yet created" });
+      }
+    } catch (error) {
+      if (
+        (error as AppwriteException).type === 'general_unauthorized_scope'
+      ) {
+        return c.json({ error: 'Unauthorized access' }, 401);
+      }
     }
   })
   .post(
@@ -37,7 +45,9 @@ const app = new Hono()
         fleet_size,
         industry,
         company_role,
+        goals,
         enable_demo_data,
+        steps_done,
       } = c.req.valid('json');
 
       const existingAccounts = await databases.listDocuments(
@@ -61,9 +71,11 @@ const app = new Hono()
           fleet_size,
           industry,
           company_role,
+          goals,
           enable_demo_data,
           trial_expiry_date: trialExpiryDate.toISOString(),
           owner: user.$id,
+          steps_done
         }
       );
 

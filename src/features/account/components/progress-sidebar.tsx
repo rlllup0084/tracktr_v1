@@ -21,11 +21,11 @@ const ProgressSidebar = () => {
           integrate with key systems.
         </p>
 
-        <ul className='flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible space-x-4 lg:space-x-0 lg:space-y-4 relative pb-4 lg:pb-0 before:hidden lg:before:block before:absolute before:left-1/2 lg:before:left-3 before:top-3 before:bottom-3 before:w-px before:bg-gray-700 justify-center lg:justify-start items-center lg:items-start'>
+        <ul className='flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible space-x-0 lg:space-y-4 relative pb-4 lg:pb-0 before:hidden lg:before:block before:absolute before:left-1/2 lg:before:left-3 before:top-3 before:bottom-3 before:w-px before:bg-gray-700 justify-center lg:justify-start items-center lg:items-start'>
           {accountSteps.map((step: AccountStep, index, array) => (
             <li
               key={index}
-              className='relative flex flex-col lg:flex-row items-center lg:items-start pb-0 lg:pb-8 last:pb-0 flex-shrink-0 lg:flex-shrink w-24 lg:w-full'
+              className='relative flex flex-col lg:flex-row items-center lg:items-start pb-0 lg:pb-8 last:pb-0 flex-shrink-0 lg:flex-shrink w-24 h-16 lg:w-full'
             >
               <div className='flex h-6 w-6 shrink-0 items-center justify-center relative z-10 bg-gray-900'>
                 {step.status === 'complete' ? (
