@@ -43,7 +43,7 @@ export const createAccountSchema = z.object({
     message: 'Company Role is required.',
   }),
   // add a new field to the schema for "What do you want to achieve with TrackTr?"
-  goals: z.string().length(500, {message: 'Goals must be less than 500 characters.'}),
+  goals: z.string().max(500, {message: 'Goals must be less than 500 characters.'}),
   enable_demo_data: z.boolean(),
   steps_done: z.number().int().min(0, { message: 'Steps Done must be a non-negative integer.' }),
 });

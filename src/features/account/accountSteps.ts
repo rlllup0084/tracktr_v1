@@ -8,7 +8,8 @@ import ReadyStep from "./components/ready-step";
 export interface AccountStep {
   title: string;
   description: string;
-  component: () => JSX.Element;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: (props: any) => JSX.Element;
   status: string;
 }
 

@@ -24,15 +24,9 @@ import { createAccountSchema } from '../schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { AccountStepProps } from '../interface';
 
-interface CompanyStepProps {
-  onLoadingChange: (loading: boolean) => void;
-}
-interface CompanyStepProps {
-  onLoadingChange: (loading: boolean) => void;
-}
-
-const CompanyStep = ({ onLoadingChange }: CompanyStepProps) => {
+const CompanyStep = ({ onLoadingChange, onSubmit }: AccountStepProps) => {
   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
@@ -46,15 +40,15 @@ const CompanyStep = ({ onLoadingChange }: CompanyStepProps) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createAccountSchema>) => {
-    onLoadingChange(true);
-    // Simulating an API call or some async operation
-    setTimeout(() => {
-      // Route to the integrations page after showing the loading modal for 3 seconds
-      onLoadingChange(false);
-      console.log(values);
-    }, 3000);
-  };
+  // const onSubmit = (values: z.infer<typeof createAccountSchema>) => {
+  //   onLoadingChange(true);
+  //   // Simulating an API call or some async operation
+  //   setTimeout(() => {
+  //     // Route to the integrations page after showing the loading modal for 3 seconds
+  //     onLoadingChange(false);
+  //     console.log(values);
+  //   }, 3000);
+  // };
 
   return (
     <>
@@ -69,7 +63,7 @@ const CompanyStep = ({ onLoadingChange }: CompanyStepProps) => {
       </div>
       <Card className='mt-8 bg-transparent border-none'>
         <Form {...form}>
-          <form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)}>
+          <form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)} id='step-2-form'>
             <div className='space-y-4'>
               <FormField
                 control={form.control}

@@ -9,7 +9,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-const ProgressSidebar = () => {
+interface ProgressSidebarProps {
+  currentStep: number
+}
+
+const ProgressSidebar = ({ currentStep }: ProgressSidebarProps) => {
   return (
     <div className='w-full lg:w-80 flex-shrink-0 bg-zinc-900/50 p-6 flex flex-col items-center lg:items-start'>
       <div className='space-y-6 w-full text-center lg:text-left'>
@@ -28,9 +32,9 @@ const ProgressSidebar = () => {
               className='relative flex flex-col lg:flex-row items-center lg:items-start pb-0 lg:pb-8 last:pb-0 flex-shrink-0 lg:flex-shrink w-24 h-16 lg:w-full'
             >
               <div className='flex h-6 w-6 shrink-0 items-center justify-center relative z-10 bg-gray-900'>
-                {step.status === 'complete' ? (
+                {index < currentStep ? (
                   <CheckCircle2 className='h-6 w-6 text-green-500' />
-                ) : step.status === 'current' ? (
+                ) : index === currentStep ? (
                   <div className='h-4 w-4 rounded-full bg-white' />
                 ) : (
                   <Circle className='h-6 w-6 text-gray-400' />
@@ -39,7 +43,7 @@ const ProgressSidebar = () => {
               <div className='mt-2 lg:mt-0 lg:ml-4 text-center lg:text-left'>
                 <p
                   className={`text-xs lg:text-sm font-medium ${
-                    step.status === 'pending' ? 'text-gray-400' : 'text-white'
+                    index > currentStep ? 'text-gray-400' : 'text-white'
                   }`}
                 >
                   {step.title}
