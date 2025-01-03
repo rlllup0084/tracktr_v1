@@ -2,21 +2,47 @@
 
 import { Button } from '@/components/ui/button';
 import { accountSteps } from '@/features/account/accountSteps';
+import { useCreateAccount } from '@/features/account/api/use-create-account';
 import PreparingAccountOverlay from '@/features/account/components/preparing-account-overlay';
 import ProgressSidebar from '@/features/account/components/progress-sidebar';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const AccountPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const CurrentStepComponent = accountSteps[currentStep].component;
-  console.log(CurrentStepComponent.name);
+  const { mutate: createAccount, isPending: isCreatingAccount } = useCreateAccount();
 
-  const handleNext = () => {
-    console.log('Next');
-    setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
+  const CurrentStepComponent = accountSteps[currentStep].component;
+
+  useEffect(() => {
+    if (isCreatingAccount) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [isCreatingAccount]);
+
+  const handleNext = async (data: unknown) => {
+    if (currentStep === 1) {
+      createAccount({ json: data });
+    }
+    // TODO: If current component is IntegrationsStep, do data processing....
+    if (currentStep === 2) {
+      // const values = form.getValues();
+      // console.log(values);
+    }
+    // TODO: If current component is VehiclesStep, do data processing....
+    if (currentStep === 3) {
+      // const values = form.getValues();
+      // console.log(values);
+    }
+    // TODO: If current component is ReadyStep, do data processing....
+    if (currentStep === 4) {
+      // const values = form.getValues();
+      // console.log(values);
+    }
   };
 
   const handlePrevious = () => {
@@ -24,7 +50,6 @@ const AccountPage = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Submit');
     setIsLoading(true);
     // Simulating an API call or some async operation
     setTimeout(() => {
@@ -32,16 +57,6 @@ const AccountPage = () => {
       setIsLoading(false);
     }, 3000);
   };
-
-  // const onSubmit = (values: z.infer<typeof createAccountSchema>) => {
-  //   onLoadingChange(true);
-  //   // Simulating an API call or some async operation
-  //   setTimeout(() => {
-  //     // Route to the integrations page after showing the loading modal for 3 seconds
-  //     onLoadingChange(false);
-  //     console.log(values);
-  //   }, 3000);
-  // };
 
   return (
     <div className='flex flex-col lg:flex-row max-w-7xl m-auto min-h-[calc(100vh-4rem)] text-white'>
@@ -57,29 +72,31 @@ const AccountPage = () => {
             height={48}
             alt='TrackTr Logo'
           />
-          {/* <CompanyStep onLoadingChange={setIsLoading} /> */}
-          <CurrentStepComponent
+            <CurrentStepComponent
             onSubmit={
               currentStep === accountSteps.length - 1
-                ? handleSubmit
-                : handleNext
+              ? handleSubmit
+              : handleNext
             }
-          />
-          <div>
+            
+            />
+            <div className='w-full flex flex-col lg:flex-row justify-between mt-8 space-y-4 lg:space-y-0 lg:space-x-4'>
             <Button
               variant='outline'
               onClick={handlePrevious}
-              disabled={currentStep === 0}
+              disabled={currentStep === 1}
+              className='w-full h-12 px-6 py-3 bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white text-md font-semibold rounded-md transition duration-200'
             >
-              Previous
+              Back
             </Button>
             <Button
               form={`step-${currentStep + 1}-form`}
               type='submit'
+              className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             >
-              {currentStep === accountSteps.length - 1 ? 'Submit' : 'Next'}
+              {currentStep === accountSteps.length - 1 ? 'Finish' : 'Continue'}
             </Button>
-          </div>
+            </div>
         </div>
       </div>
       {/* Modal Loading Overlay */}

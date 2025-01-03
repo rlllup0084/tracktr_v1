@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -26,8 +25,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { AccountStepProps } from '../interface';
 
-const CompanyStep = ({ onLoadingChange, onSubmit }: AccountStepProps) => {
-  const form = useForm<z.infer<typeof createAccountSchema>>({
+const CompanyStep = ({onSubmit}: AccountStepProps) => {
+   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
       company_name: '',
@@ -39,16 +38,6 @@ const CompanyStep = ({ onLoadingChange, onSubmit }: AccountStepProps) => {
       steps_done: 1,
     },
   });
-
-  // const onSubmit = (values: z.infer<typeof createAccountSchema>) => {
-  //   onLoadingChange(true);
-  //   // Simulating an API call or some async operation
-  //   setTimeout(() => {
-  //     // Route to the integrations page after showing the loading modal for 3 seconds
-  //     onLoadingChange(false);
-  //     console.log(values);
-  //   }, 3000);
-  // };
 
   return (
     <>
@@ -237,12 +226,12 @@ const CompanyStep = ({ onLoadingChange, onSubmit }: AccountStepProps) => {
                 your company&apos;s needs and help you get the most out of
                 TrackTr.
               </p>
-              <Button
+              {/* <Button
                 type='submit'
                 className='w-full bg-gray-600 hover:bg-gray-500'
               >
                 Continue
-              </Button>
+              </Button> */}
             </div>
           </form>
         </Form>
