@@ -11,7 +11,7 @@ const PreparingAccountOverlay = ({ loading }: PreparingAccountOverlayProps) => {
       {loading && (
         <div className='fixed inset-0 z-50 flex items-center justify-center'>
           <div className='absolute inset-0 bg-black/50 backdrop-blur-sm'></div>
-          <Card className='w-full max-w-md bg-gray-900/50 border-gray-800 z-10'>
+          <Card className='w-full max-w-md bg-zinc-900/50 border-zinc-800 z-10'>
             <div className='p-6 flex flex-col items-center justify-center space-y-4'>
               <Loader2 className='h-8 w-8 animate-spin text-gray-400' />
               <h2 className='text-xl font-semibold text-white text-center'>

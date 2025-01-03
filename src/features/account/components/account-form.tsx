@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import PreparingAccountOverlay from "./preparing-account-overlay";
 
 const AccountForm = () => {
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(2);
     const [isLoading, setIsLoading] = useState(false);
 
     const { mutate: createAccount, isPending: isCreatingAccount } = useCreateAccount();
