@@ -183,6 +183,7 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
                     </FormLabel>
                     <FormControl>
                       <Textarea
+                      className='min-h-[120px]'
                         placeholder='Enter your goals (max 500 characters)'
                         {...field}
                       />
