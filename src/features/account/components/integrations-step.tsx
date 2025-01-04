@@ -2,10 +2,11 @@
 
 import { Card } from '@/components/ui/card';
 import { AccountStepProps } from '../interface';
-import { AlertCircle, Check, CheckCircle2, X, Zap } from 'lucide-react';
+import { AlertCircle, Check, CheckCircle2, Clock, X, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 type Step = 'api-key' | 'check-status' | 'test-connection';
 
@@ -16,26 +17,15 @@ const validateAPI1 = () =>
     setTimeout(() => resolve(Math.random() > 0.5), 1500);
   });
 const validateAPI2 = () =>
-  new Promise((resolve) =>
-    {
-      // TODO: Verify connection to VIN Decoder Data Provider using API Key
-      setTimeout(() => resolve(Math.random() > 0.5), 1500);
-    }
-  );
-const validateAPI3 = () =>
-  new Promise((resolve) =>
-    {
-      // TODO: Implement connection to Fuel Management API provider using API Key (comming soon)
-      setTimeout(() => resolve(Math.random() > 0.5), 1500);
-    }
-  );
+  new Promise((resolve) => {
+    // TODO: Verify connection to VIN Decoder Data Provider using API Key
+    setTimeout(() => resolve(Math.random() > 0.5), 1500);
+  });
 
 // Mock API fix functions
 const fixAPI1 = () =>
   new Promise((resolve) => setTimeout(() => resolve(true), 2000));
 const fixAPI2 = () =>
-  new Promise((resolve) => setTimeout(() => resolve(true), 2000));
-const fixAPI3 = () =>
   new Promise((resolve) => setTimeout(() => resolve(true), 2000));
 
 const apiIntegrations = [
@@ -43,7 +33,8 @@ const apiIntegrations = [
     id: 1,
     name: 'Traccar Integration',
     description:
-      'Your vehicles are now connected to the Traccar system for real-time GPS tracking.',
+      'Connect your vehicles to the Traccar API instance for real-time GPS tracking, telematics and monitoring.',
+    successMessage: 'Your vehicles are now connected to the Traccar system for real-time GPS tracking.',
     errorMessage:
       'We were unable to verify connection to a Traccar instance. Please check your API URL or your Username and Password.',
     disabled: false,
@@ -54,25 +45,14 @@ const apiIntegrations = [
   {
     id: 2,
     name: 'VIN Decoder Data Provider',
-    description: 'Your can now decode VIN data for your vehicles.',
+    description: 'Connect to a VIN Data provider to decode and retrieve detailed information about your vehicles using their VIN numbers.',
+    successMessage: 'You can now decode VIN data for your vehicles.',
     errorMessage:
       'We were unable to verify connection to a VIN Data Provider. Please check your provided API key.',
     disabled: false,
     learn: '#',
     validateFn: validateAPI2,
     fixFn: fixAPI2,
-  },
-  {
-    id: 3,
-    name: 'Fuel Management System',
-    description:
-      'Integrates with your fuel management provider for seamless fuel usage tracking and expense management.',
-    errorMessage:
-      'We were unable to verify connection to a Fuel Management API provider. Please check your provided API key.',
-    disabled: true,
-    learn: '#',
-    validateFn: validateAPI3,
-    fixFn: fixAPI3,
   },
 ];
 
@@ -185,72 +165,82 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
         </div>
 
         <div className='mt-8 space-y-4'>
-          {/* Traccar Integration - Success */}
+          {apiIntegrations.map((api) => (
+            <Card
+              key={api.id}
+              className={`bg-zinc-900/50 p-4 ${
+                validationStatus[api.id] === 'error'
+                  ? 'border-red-900/50'
+                  : 'border-zinc-800'
+              }`}
+            >
+              <div className='flex items-start gap-4'>
+                <div className='rounded-full bg-zinc-800 p-2'>
+                  {validationStatus[api.id] === 'success' ? (
+                    <CheckCircle2 className='h-6 w-6 text-green-500' />
+                  ) : validationStatus[api.id] === 'error' ? (
+                    <AlertCircle className='h-6 w-6 text-red-500' />
+                  ) : (
+                    <Zap className='h-6 w-6 text-gray-400 animate-pulse' />
+                  )}
+                </div>
+                <div className='flex-1'>
+                  <div className='flex items-center gap-2'>
+                    <h3 className='text-sm font-medium text-white'>
+                      {api.name}
+                    </h3>
+                    {validationStatus[api.id] === 'loading' ? (
+                      <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent'></div>
+                    ) : validationStatus[api.id] === 'fixing' ? (
+                      <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent'></div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <p className='text-sm text-gray-400 mb-3'>
+                    {validationStatus[api.id] === 'loading'
+                      ? api.description
+                      : validationStatus[api.id] === 'error'
+                      ? api.errorMessage
+                      : validationStatus[api.id] === 'success'
+                      ? api.successMessage
+                      : api.description}
+                  </p>
+                  {validationStatus[api.id] === 'error' && (
+                    <div className='flex gap-3'>
+                      <Button
+                        variant='secondary'
+                        size='sm'
+                        className='text-xs'
+                        onClick={() => fixAPI(api.id)}
+                      >
+                        Resolve Issue
+                      </Button>
+                      <Button variant='ghost' size='sm' className='text-xs'>
+                        Learn more
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {/* New Integration Coming Soon */}
           <Card className='bg-zinc-900/50 border-zinc-800 p-4'>
             <div className='flex items-start gap-4'>
               <div className='rounded-full bg-zinc-800 p-2'>
-                <CheckCircle2 className='h-6 w-6 text-green-500' />
+                <Clock className='h-6 w-6 text-yellow-500' />
               </div>
               <div className='flex-1'>
                 <h3 className='text-sm font-medium text-white'>
-                  Traccar Integration
-                </h3>
-                <p className='text-sm text-gray-400'>
-                  Your vehicles are now connected to the Traccar system for
-                  real-time GPS tracking.
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          {/* API Key - Error */}
-          {/* TODO: Use this as a template */}
-          <Card className='bg-zinc-900/50 border-zinc-800 p-4 border-red-900/50'>
-            <div className='flex items-start gap-4'>
-              <div className='rounded-full bg-zinc-800 p-2'>
-                <AlertCircle className='h-6 w-6 text-red-500' />
-              </div>
-              <div className='flex-1'>
-                <h3 className='text-sm font-medium text-white'>
-                  API Key for Data Provider
+                  Fuel Management System
+                  <Badge className='ml-2 px-2 rounded-full bg-yellow-500 text-gray-900'>Coming Soon</Badge>
                 </h3>
                 <p className='text-sm text-gray-400 mb-3'>
-                  We were unable to verify your API key. Please update the key
-                  to ensure data synchronization with third-party services.
-                </p>
-                <div className='flex gap-3'>
-                  <Button
-                    variant='secondary'
-                    size='sm'
-                    className='text-xs'
-                    onClick={() => setShowResolveModal(true)}
-                  >
-                    Resolve Issue
-                  </Button>
-                  <Button variant='ghost' size='sm' className='text-xs'>
-                    Learn more
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Fuel Management - Loading */}
-          <Card className='bg-zinc-900/50 border-zinc-800 p-4'>
-            <div className='flex items-start gap-4'>
-              <div className='rounded-full bg-zinc-800 p-2'>
-                <Zap className='h-6 w-6 text-gray-400 animate-pulse' />
-              </div>
-              <div className='flex-1'>
-                <div className='flex items-center gap-2'>
-                  <h3 className='text-sm font-medium text-white'>
-                    Fuel Management System
-                  </h3>
-                  <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent'></div>
-                </div>
-                <p className='text-sm text-gray-400'>
-                  Integrates with your fuel management provider for seamless
-                  fuel usage tracking and expense management.
+                  We&apos;re working on an exciting new fuel management system
+                  provider for seamless fuel usage tracking and expense
+                  management. Stay tuned!
                 </p>
               </div>
             </div>
