@@ -2,11 +2,31 @@
 
 import { Card } from '@/components/ui/card';
 import { AccountStepProps } from '../interface';
-import { AlertCircle, Check, CheckCircle2, Clock, X, Zap } from 'lucide-react';
+import {
+  AlertCircle,
+  Check,
+  CheckCircle2,
+  Clock,
+  Loader2,
+  X,
+  Zap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { updateVinDecoderSchema } from '../schema';
+import { z } from 'zod';
 
 type Step = 'api-key' | 'check-status' | 'test-connection';
 
@@ -58,7 +78,7 @@ const apiIntegrations = [
   },
 ];
 
-const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
+const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const [validationStatus, setValidationStatus] = useState<
     Record<number, 'idle' | 'loading' | 'success' | 'error' | 'fixing'>
   >({});
@@ -70,6 +90,19 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
   const [currentStep, setCurrentStep] = useState<Step>('api-key');
   const [progress, setProgress] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
+
+  const formVin = useForm<z.infer<typeof updateVinDecoderSchema>>({
+    resolver: zodResolver(updateVinDecoderSchema),
+    defaultValues: {
+      ...data,
+      vin_decoder_key: '',
+    },
+  });
+
+  useEffect(() => {
+    console.log('Initial Data', data);
+  }, [data])
+  
 
   // TODO: Code to verify connection to Traccar instance using API URL, Username, and Password
   // const verifyTraccarConnection = async (apiUrl: string, username: string, password: string) => {
@@ -187,7 +220,7 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
 
   useEffect(() => {
     validateAllAPIs();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -318,7 +351,7 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
           <Card className='w-full max-w-lg bg-zinc-900/50 border-zinc-800 z-10'>
             <div className='p-6'>
               <div className='flex items-start justify-between mb-6'>
-                <div className='flex items-center gap-3'>
+                <div className='flex items-start gap-3'>
                   <div className='rounded-full bg-zinc-800 p-2'>
                     <AlertCircle className='h-6 w-6 text-red-500' />
                   </div>
@@ -343,70 +376,43 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
                 </Button>
               </div>
 
-              <div className='relative mb-8'>
-                <div className='absolute left-0 top-3 w-full h-px bg-gray-800'></div>
-                <div className='relative flex justify-between'>
-                  {[
-                    {
-                      title: 'Check Your API Key',
-                      subtitle: 'You can update your API key below',
-                      step: 'api-key',
-                    },
-                    {
-                      title: 'Check API Status',
-                      subtitle: 'Checking VIN Decoder service availability',
-                      step: 'check-status',
-                    },
-                    {
-                      title: 'Test Connection',
-                      subtitle: 'Test the connection again to verify',
-                      step: 'test-connection',
-                    },
-                  ].map((step, index) => (
-                    <div
-                      key={index}
-                      className='flex flex-col items-center text-center w-1/3'
+              <Form {...formVin}>
+                <form
+                  onSubmit={formVin.handleSubmit(onSubmit)}
+                  className='space-y-2'
+                >
+                  <FormField
+                    control={formVin.control}
+                    name='vin_decoder_key'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>API Key *</FormLabel>
+                        <FormControl>
+                          <Input placeholder='Your API Key' {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className='pt-2'>
+                    <Button
+                      type='submit'
+                      className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
+                      disabled={isUpdating}
                     >
-                      <div
-                        className={`w-6 h-6 rounded-full mb-2 flex items-center justify-center z-10 
-                        ${
-                          currentStep === step.step
-                            ? 'bg-white'
-                            : currentStep === 'check-status' &&
-                              step.step === 'api-key'
-                            ? 'bg-green-500'
-                            : 'bg-zinc-800'
-                        }`}
-                      >
-                        {currentStep === 'check-status' &&
-                        step.step === 'api-key' ? (
-                          <Check className='h-3 w-3 text-white' />
-                        ) : (
-                          <div
-                            className={`w-2 h-2 rounded-full 
-                            ${
-                              currentStep === step.step
-                                ? 'bg-zinc-900'
-                                : 'bg-zinc-600'
-                            }`}
-                          ></div>
-                        )}
-                      </div>
-                      <div className='space-y-1'>
-                        <p className='text-xs font-medium text-white'>
-                          {step.title}
-                        </p>
-                        <p className='text-xs text-gray-400'>{step.subtitle}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {currentStep === 'api-key' ? (
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <label
+                      {isUpdating ? (
+                        <>
+                          <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                          Updating...
+                        </>
+                      ) : (
+                        'Update API Key'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+              {/* <label
                       htmlFor='api-key'
                       className='block text-sm font-medium text-white'
                     >
@@ -423,46 +429,7 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
                     onClick={handleUpdateApiKey}
                   >
                     Update API Key
-                  </Button>
-                </div>
-              ) : (
-                currentStep === 'check-status' && (
-                  <div className='flex flex-col items-center justify-center py-8'>
-                    <div className='relative w-32 h-32'>
-                      <svg className='w-full h-full transform -rotate-90'>
-                        <circle
-                          cx='64'
-                          cy='64'
-                          r='56'
-                          className='stroke-gray-800'
-                          strokeWidth='8'
-                          fill='none'
-                        />
-                        <circle
-                          cx='64'
-                          cy='64'
-                          r='56'
-                          className='stroke-white'
-                          strokeWidth='8'
-                          fill='none'
-                          strokeLinecap='round'
-                          strokeDasharray={2 * Math.PI * 56}
-                          strokeDashoffset={
-                            2 * Math.PI * 56 * (1 - progress / 100)
-                          }
-                          style={{ transition: 'stroke-dashoffset 0.1s ease' }}
-                        />
-                      </svg>
-                      <div className='absolute inset-0 flex flex-col items-center justify-center'>
-                        <span className='text-sm text-gray-400'>Checking</span>
-                        <span className='text-2xl font-bold text-white'>
-                          {progress}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
+                  </Button> */}
             </div>
           </Card>
         </div>

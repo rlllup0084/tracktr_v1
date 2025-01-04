@@ -82,6 +82,49 @@ const app = new Hono()
       return c.json({ data: accounts });
     }
   )
+  // TODO: Add update account route
+  .put(
+    '/:accountId',
+    zValidator('json', createAccountSchema),
+    sessionMiddleware,
+    async (c) => {
+      const databases = c.get('databases');
+      const user = c.get("user");
+      const { accountId } = c.req.param();
+      const {
+        company_name,
+        fleet_size,
+        industry,
+        company_role,
+        goals,
+        enable_demo_data,
+        steps_done,
+      } = c.req.valid('json');
+
+      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+
+      if (account.owner !== user.$id) {
+        return c.json({ error: 'Unauthorized' }, 403);
+      }
+
+      const updatedAccount = await databases.updateDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId,
+        {
+          company_name,
+          fleet_size,
+          industry,
+          company_role,
+          goals,
+          enable_demo_data,
+          steps_done,
+        }
+      );
+
+      return c.json({ data: updatedAccount });
+    }
+  )
   .patch(
     '/:accountId',
     zValidator('json', updateExpiryAndLimitSchema),

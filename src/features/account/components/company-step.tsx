@@ -24,9 +24,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { AccountStepProps } from '../interface';
+import { useEffect } from 'react';
 
-const CompanyStep = ({onSubmit}: AccountStepProps) => {
-   const form = useForm<z.infer<typeof createAccountSchema>>({
+const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
+  const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
       company_name: '',
@@ -38,6 +39,21 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
       steps_done: 1,
     },
   });
+
+  // ...initialValues,
+  //     image: initialValues.imageUrl ?? "",
+
+  useEffect(() => {
+    console.log('Initial Data', data);
+  }, [data])
+
+  // Populate the form with the initial data
+  useEffect(() => {
+    if (data) {
+      form.reset(data);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <>
@@ -52,7 +68,11 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
       </div>
       <Card className='mt-8 bg-transparent border-none'>
         <Form {...form}>
-          <form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)} id='step-2-form'>
+          <form
+            className='space-y-6'
+            onSubmit={form.handleSubmit(onSubmit)}
+            id='step-2-form'
+          >
             <div className='space-y-4'>
               <FormField
                 control={form.control}
@@ -63,10 +83,7 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
                       Company or Organization Name
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='Company name'
-                        {...field}
-                      />
+                      <Input placeholder='Company name' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -131,11 +148,19 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                      {Object.values(createAccountSchema.shape.industry._def.values).map((industry) => (
-                        <SelectItem key={industry} value={industry}>
-                          {industry.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                        </SelectItem>
-                      ))}
+                        {Object.values(
+                          createAccountSchema.shape.industry._def.values
+                        ).map((industry) => (
+                          <SelectItem key={industry} value={industry}>
+                            {industry
+                              .split('_')
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              )
+                              .join(' ')}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -161,11 +186,19 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                      {Object.values(createAccountSchema.shape.company_role._def.values).map((role) => (
-                        <SelectItem key={role} value={role}>
-                          {role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                        </SelectItem>
-                      ))}
+                        {Object.values(
+                          createAccountSchema.shape.company_role._def.values
+                        ).map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role
+                              .split('_')
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              )
+                              .join(' ')}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -183,7 +216,7 @@ const CompanyStep = ({onSubmit}: AccountStepProps) => {
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                      className='min-h-[120px]'
+                        className='min-h-[120px]'
                         placeholder='Enter your goals (max 500 characters)'
                         {...field}
                       />
