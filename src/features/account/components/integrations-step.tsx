@@ -34,7 +34,8 @@ const apiIntegrations = [
     name: 'Traccar Integration',
     description:
       'Connect your vehicles to the Traccar API instance for real-time GPS tracking, telematics and monitoring.',
-    successMessage: 'Your vehicles are now connected to the Traccar system for real-time GPS tracking.',
+    successMessage:
+      'Your vehicles are now connected to the Traccar system for real-time GPS tracking.',
     errorMessage:
       'We were unable to verify connection to a Traccar instance. Please check your API URL or your Username and Password.',
     disabled: false,
@@ -45,7 +46,8 @@ const apiIntegrations = [
   {
     id: 2,
     name: 'VIN Decoder Data Provider',
-    description: 'Connect to a VIN Data provider to decode and retrieve detailed information about your vehicles using their VIN numbers.',
+    description:
+      'Connect to a VIN Data provider to decode and retrieve detailed information about your vehicles using their VIN numbers.',
     successMessage: 'You can now decode VIN data for your vehicles.',
     errorMessage:
       'We were unable to verify connection to a VIN Data Provider. Please check your provided API key.',
@@ -63,10 +65,46 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
   const [progress1, setProgress1] = useState<Record<number, number>>({});
   const [overallProgress, setOverallProgress] = useState(0);
 
-  const [showResolveModal, setShowResolveModal] = useState(false);
+  const [showResolveTraccarModal, setShowResolveTraccarModal] = useState(false);
+  const [showResolveVinModal, setShowResolveVinModal] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>('api-key');
   const [progress, setProgress] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
+
+  // TODO: Code to verify connection to Traccar instance using API URL, Username, and Password
+  // const verifyTraccarConnection = async (apiUrl: string, username: string, password: string) => {
+  //   try {
+  //     const response = await fetch(apiUrl, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Authorization': 'Basic ' + btoa(`${username}:${password}`),
+  //       },
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Failed to connect to Traccar instance');
+  //     }
+  //     return true;
+  //   } catch (error) {
+  //     console.error('Error verifying Traccar connection:', error);
+  //     return false;
+  //   }
+  // };
+
+  // TODO: Code to verify connection to VIN Decoder Data Provider using API Key
+  // const verifyVinDecoderConnection = async (apiKey: string) => {
+  //   try {
+  //     const response = await fetch(`https://auto.dev/api/vin/ZPBUA1ZL9KLA00848?apikey=${apiKey}`, {
+  //       method: 'GET',
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Failed to connect to VIN Decoder API');
+  //     }
+  //     return true;
+  //   } catch (error) {
+  //     console.error('Error verifying VIN Decoder connection:', error);
+  //     return false;
+  //   }
+  // };
 
   const validateAllAPIs = async () => {
     setValidationStatus({});
@@ -109,32 +147,47 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
     setOverallProgress((prev) => Math.min(prev + 25, 100));
   };
 
+  // TODO: If fixAPI is called, the showResolveModal state should be set to true
   const fixAPI = async (id: number) => {
-    setValidationStatus((prev) => ({ ...prev, [id]: 'fixing' }));
-    setProgress1((prev) => ({ ...prev, [id]: 0 }));
-
-    const progressInterval = setInterval(() => {
-      setProgress1((prev) => {
-        const newProgress = Math.min((prev[id] || 0) + 5, 90);
-        return { ...prev, [id]: newProgress };
-      });
-    }, 100);
-
-    try {
-      const api = apiIntegrations.find((api) => api.id === id);
-      if (!api) throw new Error('API not found');
-      await api.fixFn();
-      await validateAPI(id);
-    } catch (error) {
-      console.log(error);
-      setValidationStatus((prev) => ({ ...prev, [id]: 'error' }));
+    switch (id) {
+      case 1:
+        await fixAPI1();
+        break;
+      case 2:
+        setShowResolveVinModal(true);
+        break;
     }
-
-    clearInterval(progressInterval);
   };
+
+  // const originalFixAPI = fixAPI;
+
+  // const fixAPI = async (id: number) => {
+  //   setValidationStatus((prev) => ({ ...prev, [id]: 'fixing' }));
+  //   setProgress1((prev) => ({ ...prev, [id]: 0 }));
+
+  //   const progressInterval = setInterval(() => {
+  //     setProgress1((prev) => {
+  //       const newProgress = Math.min((prev[id] || 0) + 5, 90);
+  //       return { ...prev, [id]: newProgress };
+  //     });
+  //   }, 100);
+
+  //   try {
+  //     const api = apiIntegrations.find((api) => api.id === id);
+  //     if (!api) throw new Error('API not found');
+  //     await api.fixFn();
+  //     await validateAPI(id);
+  //   } catch (error) {
+  //     console.log(error);
+  //     setValidationStatus((prev) => ({ ...prev, [id]: 'error' }));
+  //   }
+
+  //   clearInterval(progressInterval);
+  // };
 
   useEffect(() => {
     validateAllAPIs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -235,7 +288,9 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
               <div className='flex-1'>
                 <h3 className='text-sm font-medium text-white'>
                   Fuel Management System
-                  <Badge className='ml-2 px-2 rounded-full bg-yellow-500 text-gray-900'>Coming Soon</Badge>
+                  <Badge className='ml-2 px-2 rounded-full bg-yellow-500 text-gray-900'>
+                    Coming Soon
+                  </Badge>
                 </h3>
                 <p className='text-sm text-gray-400 mb-3'>
                   We&apos;re working on an exciting new fuel management system
@@ -253,12 +308,12 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
         </p>
       </div>
 
-      {/* Resolve Issue Modal */}
-      {showResolveModal && (
+      {/* Resolve Vin Issue Modal */}
+      {showResolveVinModal && (
         <div className='fixed inset-0 z-50 flex items-center justify-center'>
           <div
             className='absolute inset-0 bg-black/50 backdrop-blur-sm'
-            onClick={() => setShowResolveModal(false)}
+            onClick={() => setShowResolveVinModal(false)}
           ></div>
           <Card className='w-full max-w-lg bg-zinc-900/50 border-zinc-800 z-10'>
             <div className='p-6'>
@@ -282,7 +337,7 @@ const IntegrationsStep = ({ onSubmit }: AccountStepProps) => {
                   variant='ghost'
                   size='icon'
                   className='text-gray-400 hover:text-white'
-                  onClick={() => setShowResolveModal(false)}
+                  onClick={() => setShowResolveVinModal(false)}
                 >
                   <X className='h-4 w-4' />
                 </Button>
