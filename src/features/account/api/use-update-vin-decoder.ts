@@ -26,7 +26,7 @@ export const useUpdateVinDecoder = () => {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success('Vin decoder updated');
+      // toast.success('Vin decoder updated');
       queryClient.invalidateQueries({ queryKey: ['account'] });
     },
     onError: () => {

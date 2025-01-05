@@ -12,7 +12,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -27,6 +27,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateVinDecoderSchema } from '../schema';
 import { z } from 'zod';
+import { Account } from '../types';
 
 type Step = 'api-key' | 'check-status' | 'test-connection';
 
@@ -99,10 +100,40 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     },
   });
 
+  const previousDataRef = useRef<typeof data | null>(null);
+
   useEffect(() => {
     console.log('Initial Data', data);
-  }, [data])
+
+    if (previousDataRef.current && data) {
+      const changedAttributes = Object.keys(data).filter(key => {
+        return previousDataRef.current && data[key] !== previousDataRef.current[key];
+      });
+
+      if (changedAttributes.length > 0) {
+        console.log('Changed attributes:', changedAttributes);
+        changedAttributes.forEach(async attr => {
+          if (previousDataRef.current) {
+            if (attr === 'vin_decoder_key') {
+              // console.log(`Attribute ${attr} changed from ${previousDataRef.current[attr]} to ${data[attr]}`);
+              setShowResolveVinModal(false);
+              await validateAPI(2);
+            }
+          }
+        });
+      }
+    }
   
+    previousDataRef.current = data;
+  }, [data]);
+  
+  // Populate the form with the initial data
+  useEffect(() => {
+    if (data) {
+      formVin.reset(data);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   // TODO: Code to verify connection to Traccar instance using API URL, Username, and Password
   // const verifyTraccarConnection = async (apiUrl: string, username: string, password: string) => {
@@ -192,7 +223,11 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
-  // const originalFixAPI = fixAPI;
+  useEffect(() => {
+    console.log('showResolveVinModal', showResolveVinModal);
+  }, [showResolveVinModal])
+
+    // const originalFixAPI = fixAPI;
 
   // const fixAPI = async (id: number) => {
   //   setValidationStatus((prev) => ({ ...prev, [id]: 'fixing' }));
@@ -233,8 +268,7 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   }, [isChecking, progress]);
 
   const handleUpdateApiKey = () => {
-    setCurrentStep('check-status');
-    setIsChecking(true);
+    console.log('Update API Key');
   };
 
   return (
