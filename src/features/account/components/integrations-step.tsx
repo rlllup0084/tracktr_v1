@@ -25,9 +25,13 @@ import {
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { updateVinDecoderSchema } from '../schema';
+import {
+  updateTraccarIntegrationSchema,
+  updateVinDecoderSchema,
+} from '../schema';
 import { z } from 'zod';
 import { Account } from '../types';
+import { set } from 'date-fns';
 
 type Step = 'api-key' | 'check-status' | 'test-connection';
 
@@ -95,8 +99,18 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const formVin = useForm<z.infer<typeof updateVinDecoderSchema>>({
     resolver: zodResolver(updateVinDecoderSchema),
     defaultValues: {
-      ...data,
+      // ...data,
       vin_decoder_key: '',
+    },
+  });
+
+  const formTraccar = useForm<z.infer<typeof updateTraccarIntegrationSchema>>({
+    resolver: zodResolver(updateTraccarIntegrationSchema),
+    defaultValues: {
+      // ...data,
+      traccar_api: '',
+      username: '',
+      password: '',
     },
   });
 
@@ -104,18 +118,29 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
 
   useEffect(() => {
     console.log('Initial Data', data);
+    if (data) {
+      // setVinDecoderKey(data['vin_decoder_key']);
+      console.log('Initial VIN Decoder Key:', data['vin_decoder_key']);
+    }
 
     if (previousDataRef.current && data) {
-      const changedAttributes = Object.keys(data).filter(key => {
-        return previousDataRef.current && data[key] !== previousDataRef.current[key];
+      const changedAttributes = Object.keys(data).filter((key) => {
+        return (
+          previousDataRef.current && data[key] !== previousDataRef.current[key]
+        );
       });
 
       if (changedAttributes.length > 0) {
         console.log('Changed attributes:', changedAttributes);
-        changedAttributes.forEach(async attr => {
+        changedAttributes.forEach(async (attr) => {
           if (previousDataRef.current) {
+            if (attr === 'traccar_api_token') {
+              setShowResolveTraccarModal(false);
+              await validateAPI(1);
+            }
             if (attr === 'vin_decoder_key') {
               // console.log(`Attribute ${attr} changed from ${previousDataRef.current[attr]} to ${data[attr]}`);
+              // Save the new VIN Decoder API Key to State
               setShowResolveVinModal(false);
               await validateAPI(2);
             }
@@ -123,52 +148,23 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         });
       }
     }
-  
+
     previousDataRef.current = data;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-  
+
   // Populate the form with the initial data
   useEffect(() => {
     if (data) {
-      formVin.reset(data);
+      formTraccar.reset({
+        traccar_api: data.traccar_api || '',
+        username: data.username || '',
+        password: data.password || '',
+      });
+      formVin.reset({ vin_decoder_key: data.vin_decoder_key || '' });
+      validateAllAPIs();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-
-  // TODO: Code to verify connection to Traccar instance using API URL, Username, and Password
-  // const verifyTraccarConnection = async (apiUrl: string, username: string, password: string) => {
-  //   try {
-  //     const response = await fetch(apiUrl, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Authorization': 'Basic ' + btoa(`${username}:${password}`),
-  //       },
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Failed to connect to Traccar instance');
-  //     }
-  //     return true;
-  //   } catch (error) {
-  //     console.error('Error verifying Traccar connection:', error);
-  //     return false;
-  //   }
-  // };
-
-  // TODO: Code to verify connection to VIN Decoder Data Provider using API Key
-  // const verifyVinDecoderConnection = async (apiKey: string) => {
-  //   try {
-  //     const response = await fetch(`https://auto.dev/api/vin/ZPBUA1ZL9KLA00848?apikey=${apiKey}`, {
-  //       method: 'GET',
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Failed to connect to VIN Decoder API');
-  //     }
-  //     return true;
-  //   } catch (error) {
-  //     console.error('Error verifying VIN Decoder connection:', error);
-  //     return false;
-  //   }
-  // };
 
   const validateAllAPIs = async () => {
     setValidationStatus({});
@@ -180,42 +176,113 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
+  const decryptBase64 = (encoded: string) => {
+    const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
+    const [username, password] = decoded.split(':');
+    return { username, password };
+  };
+
   const validateAPI = async (id: number) => {
     setValidationStatus((prev) => ({ ...prev, [id]: 'loading' }));
     setProgress1((prev) => ({ ...prev, [id]: 0 }));
 
-    const progressInterval = setInterval(() => {
-      setProgress1((prev) => {
-        const newProgress = Math.min((prev[id] || 0) + 10, 90);
-        return { ...prev, [id]: newProgress };
-      });
-    }, 150);
-
-    try {
-      const api = apiIntegrations.find((api) => api.id === id);
-      if (!api) throw new Error('API not found');
-      const result = await api.validateFn();
-      setValidationStatus((prev) => ({
-        ...prev,
-        [id]: result ? 'success' : 'error',
-      }));
-    } catch (error) {
-      console.log(error);
-      setValidationStatus((prev) => ({ ...prev, [id]: 'error' }));
+    switch (id) {
+      case 1:
+        console.log('Validating Traccar API');
+        if (!data['traccar_api_token']) {
+          setValidationStatus((prev) => ({ ...prev, [id]: 'error' }));
+        } else {
+          const { username, password } = decryptBase64(
+            data['traccar_api_token']
+          );
+          verifyTraccarConnection(
+            data['traccar_api'],
+            data[username],
+            data[password]
+          ).then((result) => {
+            console.log('Valid Call', result);
+            setValidationStatus((prev) => ({
+              ...prev,
+              [id]: result ? 'success' : 'error',
+            }));
+          });
+        }
+        break;
+      case 2:
+        console.log('Validating VIN Decoder API');
+        if (!data['vin_decoder_key']) {
+          setValidationStatus((prev) => ({ ...prev, [id]: 'error' }));
+        } else {
+          verifyVinDecoderConnection(data['vin_decoder_key']).then((result) => {
+            console.log('Valid Call', result);
+            setValidationStatus((prev) => ({
+              ...prev,
+              [id]: result ? 'success' : 'error',
+            }));
+          });
+        }
+        break;
     }
+  };
 
-    clearInterval(progressInterval);
-    setProgress1((prev) => ({ ...prev, [id]: 100 }));
+  // Code to verify connection to Traccar instance using API URL, Username, and Password
+  const verifyTraccarConnection = async (
+    apiUrl: string,
+    username: string,
+    password: string
+  ) => {
+    try {
+      const response = await fetch(
+        `https://cors-anywhere.herokuapp.com/${apiUrl}/api/devices`,
+        {
+          method: 'GET',
+          headers: {
+            'Access-Control-Allow-Origin': 'http://localhost:3000', // Replace with your frontend origin in production
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            Authorization: 'Basic ' + btoa(`${username}:${password}`),
+          },
+        }
+      );
+      if (!response.ok) {
+        console.log('Failed to connect to Traccar instance');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error verifying Traccar connection:', error);
+      return false;
+    }
+  };
 
-    // Update overall progress
-    setOverallProgress((prev) => Math.min(prev + 25, 100));
+  // Code to verify connection to VIN Decoder Data Provider using API Key
+  const verifyVinDecoderConnection = async (apiKey: string) => {
+    try {
+      const response = await fetch(
+        `https://cors-anywhere.herokuapp.com/https://auto.dev/api/vin/ZPBUA1ZL9KLA00848?apikey=${apiKey}`,
+        {
+          method: 'GET',
+          headers: {
+            'Access-Control-Allow-Origin': 'http://localhost:3000', // Replace with your frontend origin in production
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          },
+        }
+      );
+      if (!response.ok) {
+        console.log('Failed to connect to VIN Decoder API');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error verifying VIN Decoder connection:', error);
+      return false;
+    }
   };
 
   // TODO: If fixAPI is called, the showResolveModal state should be set to true
   const fixAPI = async (id: number) => {
     switch (id) {
       case 1:
-        await fixAPI1();
+        setShowResolveTraccarModal(true);
         break;
       case 2:
         setShowResolveVinModal(true);
@@ -223,11 +290,7 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
-  useEffect(() => {
-    console.log('showResolveVinModal', showResolveVinModal);
-  }, [showResolveVinModal])
-
-    // const originalFixAPI = fixAPI;
+  // const originalFixAPI = fixAPI;
 
   // const fixAPI = async (id: number) => {
   //   setValidationStatus((prev) => ({ ...prev, [id]: 'fixing' }));
@@ -253,10 +316,10 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   //   clearInterval(progressInterval);
   // };
 
-  useEffect(() => {
-    validateAllAPIs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   validateAllAPIs();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     if (isChecking && progress < 100) {
@@ -267,9 +330,9 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   }, [isChecking, progress]);
 
-  const handleUpdateApiKey = () => {
-    console.log('Update API Key');
-  };
+  // const handleUpdateApiKey = () => {
+  //   console.log('Update API Key');
+  // };
 
   return (
     <>
@@ -374,6 +437,115 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
           troubleshooting options or update credentials.
         </p>
       </div>
+
+      {/* Resolve Traccar Issue Modal */}
+      {showResolveTraccarModal && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+          <div
+            className='absolute inset-0 bg-black/50 backdrop-blur-sm'
+            onClick={() => setShowResolveTraccarModal(false)}
+          ></div>
+          <Card className='w-full max-w-lg bg-zinc-900/50 border-zinc-800 z-10'>
+            <div className='p-6'>
+              <div className='flex items-start justify-between mb-6'>
+                <div className='flex items-start gap-3'>
+                  <div className='rounded-full bg-zinc-800 p-2'>
+                    <AlertCircle className='h-6 w-6 text-red-500' />
+                  </div>
+                  <div>
+                    <h2 className='text-lg font-semibold text-white'>
+                      Resolve Issue for Traccar API
+                    </h2>
+                    <p className='text-sm text-gray-400'>
+                      We&apos;ve detected a problem with the Traccar API
+                      integration. Please follow the steps below to resolve the
+                      issue.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='text-gray-400 hover:text-white'
+                  onClick={() => setShowResolveTraccarModal(false)}
+                >
+                  <X className='h-4 w-4' />
+                </Button>
+              </div>
+
+              <Form {...formTraccar}>
+                <form
+                  onSubmit={formTraccar.handleSubmit(onSubmit)}
+                  className='space-y-2'
+                >
+                  <FormField
+                    control={formTraccar.control}
+                    name='traccar_api'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Traccar API URL</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Your Traccar API URL'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={formTraccar.control}
+                    name='username'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input placeholder='Enter your username' {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={formTraccar.control}
+                    name='password'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='password'
+                            placeholder='Enter your password'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className='pt-2'>
+                    <Button
+                      type='submit'
+                      className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
+                      disabled={isUpdating}
+                    >
+                      {isUpdating ? (
+                        <>
+                          <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                          Updating...
+                        </>
+                      ) : (
+                        'Update API Information'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Resolve Vin Issue Modal */}
       {showResolveVinModal && (

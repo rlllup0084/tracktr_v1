@@ -162,7 +162,7 @@ const app = new Hono()
     async (c) => {
       const databases = c.get('databases');
       const user = c.get("user");
-      const { traccar_api_url, username, password } = c.req.valid('json');
+      const { traccar_api, username, password } = c.req.valid('json');
 
       const { accountId } = c.req.param();
 
@@ -177,7 +177,7 @@ const app = new Hono()
         ACCOUNTS_ID,
         accountId,
         {
-          traccar_api: traccar_api_url,
+          traccar_api,
           traccar_api_token: Buffer.from(`${username}:${password}`).toString(
             'base64'
           ),

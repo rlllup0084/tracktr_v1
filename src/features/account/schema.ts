@@ -64,7 +64,7 @@ export const updateExpiryAndLimitSchema = z.object({
 });
 
 export const updateTraccarIntegrationSchema = z.object({
-  traccar_api_url: z
+  traccar_api: z
     .string()
     .url({ message: 'Traccar API URL must be a valid URL.' }),
   username: z.string().nonempty({ message: 'Username is required.' }),

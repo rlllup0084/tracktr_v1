@@ -11,6 +11,7 @@ import { useUpdateVinDecoder } from '../api/use-update-vin-decoder';
 import { useGetAccount } from '../api/use-get-account';
 import { Account } from '../types';
 import { useUpdateAccount } from '../api/use-update-account';
+import { useUpdateTraccarIntegration } from '../api/use-update-traccar-integration';
 
 const AccountForm = () => {
   const { data: initialValues, isLoadingValue } = useGetAccount();
@@ -21,15 +22,19 @@ const AccountForm = () => {
 
   const { mutate: createAccount, isPending: isCreatingAccount } =
     useCreateAccount();
-    const { mutate: updateAccount, isPending: isUpdatingAccount } =
+  const { mutate: updateAccount, isPending: isUpdatingAccount } =
     useUpdateAccount();
   const { mutate: updateVinDecoder, isPending: isUpdatingVinDecoder } =
     useUpdateVinDecoder();
+  const {
+    mutate: updateTraccarIntegration,
+    isPending: isUpdatingTraccarIntegration,
+  } = useUpdateTraccarIntegration();
 
   const CurrentStepComponent = accountSteps[currentStep].component;
 
   useEffect(() => {
-    if (isCreatingAccount ) {
+    if (isCreatingAccount) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
@@ -37,7 +42,7 @@ const AccountForm = () => {
   }, [isCreatingAccount]);
 
   useEffect(() => {
-    if (isUpdatingAccount ) {
+    if (isUpdatingAccount) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
@@ -69,7 +74,18 @@ const AccountForm = () => {
       console.log('Update VIN Api Key', data);
       if (initialValues !== null) {
         const combinedData = { ...initialValues, ...data };
-        updateVinDecoder({ json: data, param: { accountId: combinedData.$id } });
+        // If data has attribute traccar_api_url, then update traccar integration
+        if (data['traccar_api_url']) {
+          updateTraccarIntegration({
+            json: data,
+            param: { accountId: combinedData.$id },
+          });
+        } else if (data['vin_decoder_key']) {
+          updateVinDecoder({
+            json: data,
+            param: { accountId: combinedData.$id },
+          });
+        }
       }
     }
     // TODO: If current component is VehiclesStep, do data processing....
