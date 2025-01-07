@@ -156,10 +156,12 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   // Populate the form with the initial data
   useEffect(() => {
     if (data) {
+      // get username and password from traccar_api_token
+      const { username, password } = decryptBase64(data.traccar_api_token);
       formTraccar.reset({
         traccar_api: data.traccar_api || '',
-        username: data.username || '',
-        password: data.password || '',
+        username: username || '',
+        password: password || '',
       });
       formVin.reset({ vin_decoder_key: data.vin_decoder_key || '' });
       validateAllAPIs();
@@ -197,8 +199,8 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
           );
           verifyTraccarConnection(
             data['traccar_api'],
-            data[username],
-            data[password]
+            username,
+            password
           ).then((result) => {
             console.log('Valid Call', result);
             setValidationStatus((prev) => ({
@@ -232,15 +234,13 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     password: string
   ) => {
     try {
+      const bearerToken = btoa(`${username}:${password}`);
+      // TODO: Do not show browser login prompt for basic auth
       const response = await fetch(
-        `https://cors-anywhere.herokuapp.com/${apiUrl}/api/devices`,
+        `/api/proxy/api/devices?target=${apiUrl}&token=${bearerToken}`,
         {
           method: 'GET',
-          headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:3000', // Replace with your frontend origin in production
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-            Authorization: 'Basic ' + btoa(`${username}:${password}`),
-          },
+          credentials: 'omit',
         }
       );
       if (!response.ok) {
@@ -254,6 +254,7 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
+  // TODO: Try use the http-proxy-middleware package to bypass CORS issues
   // Code to verify connection to VIN Decoder Data Provider using API Key
   const verifyVinDecoderConnection = async (apiKey: string) => {
     try {
