@@ -236,8 +236,10 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     try {
       const bearerToken = btoa(`${username}:${password}`);
       // TODO: Do not show browser login prompt for basic auth
+      // /api/proxy/endpoint?target=http://tracktr.gavellogistics.com:8082&token=xyz&authType=basic
+      // /api/proxy/api/devices?target=${apiUrl}&token=${bearerToken}
       const response = await fetch(
-        `/api/proxy/api/devices?target=${apiUrl}&token=${bearerToken}`,
+        `/api/proxy/api/devices?target=${apiUrl}&token=${bearerToken}&authType=basic`,
         {
           method: 'GET',
           credentials: 'omit',
@@ -257,15 +259,17 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   // TODO: Try use the http-proxy-middleware package to bypass CORS issues
   // Code to verify connection to VIN Decoder Data Provider using API Key
   const verifyVinDecoderConnection = async (apiKey: string) => {
+    // `https://auto.dev/api/vin/ZPBUA1ZL9KLA00848?apikey=${apiKey}`
     try {
+      // /api/proxy/endpoint?target=https://auto.dev/api&token=ZrQEPSkK...&authType=apikey
       const response = await fetch(
-        `https://cors-anywhere.herokuapp.com/https://auto.dev/api/vin/ZPBUA1ZL9KLA00848?apikey=${apiKey}`,
+        `/api/proxy/api/vin/ZPBUA1ZL9KLA00848?target=https://auto.dev/api&token=${apiKey}&authType=bearer`,
         {
           method: 'GET',
-          headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:3000', // Replace with your frontend origin in production
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          },
+          // headers: {
+          //   'Access-Control-Allow-Origin': 'http://localhost:3000', // Replace with your frontend origin in production
+          //   'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          // },
         }
       );
       if (!response.ok) {

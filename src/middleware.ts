@@ -1,36 +1,47 @@
-import { NextRequest } from 'next/server';
-// middleware.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
-  // 1. Extract the target API URL and path from the request
   const targetApiUrl = req.nextUrl.searchParams.get('target');
   const targetToken = req.nextUrl.searchParams.get('token');
+  const authType = req.nextUrl.searchParams.get('authType') || 'basic';
   const targetPath = req.nextUrl.pathname.split('/api/proxy/')[1];
 
   if (!targetApiUrl) {
     return new NextResponse('Missing target parameter', { status: 400 });
   }
 
-  // 2. Construct the URL for the target API
-  const url = new URL(targetPath, targetApiUrl);
+  try {
+    const url = new URL(targetPath, targetApiUrl);
+    
+    req.nextUrl.searchParams.forEach((value, key) => {
+      if (!['target', 'token', 'authType'].includes(key)) {
+        url.searchParams.set(key, value);
+      }
+    });
 
-  // 3. Rewrite the request to the target API
-  const response = NextResponse.rewrite(url);
+    const response = NextResponse.rewrite(url);
 
-  // how to pass this Authorization: 'Basic ' + btoa(`${username}:${password}`),
-  // 4. (Optional) Add headers to the request
-  // response.headers.set('Authorization', 'Bearer ' + process
+    response.headers.set('Accept', 'application/json');
 
-console.log("targetToken", targetToken);
-  // (Optional) Modify headers, etc. if needed
-  response.headers.set('Accept', 'application/json');
-  response.headers.set('Authorization', `basic ${targetToken}`);
+    if (targetToken) {
+      switch (authType.toLowerCase()) {
+        case 'basic':
+          response.headers.set('Authorization', `Basic ${targetToken}`);
+          break;
+        case 'bearer':
+          response.headers.set('Authorization', `Bearer ${targetToken}`);
+          break;
+        case 'apikey':
+          response.headers.set('X-API-Key', targetToken);
+          break;
+      }
+    }
 
-  // console log resopnse
-  console.log('Response', response);
-
-  return response;
+    return response;
+  } catch (error) {
+    console.log(error);
+    return new NextResponse('Invalid target URL', { status: 400 });
+  }
 }
 
 export const config = {
