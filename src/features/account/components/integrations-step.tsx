@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { AccountStepProps } from '../interface';
 import {
   AlertCircle,
-  Check,
   CheckCircle2,
   Clock,
   Loader2,
@@ -12,7 +11,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -30,28 +29,6 @@ import {
   updateVinDecoderSchema,
 } from '../schema';
 import { z } from 'zod';
-import { Account } from '../types';
-import { set } from 'date-fns';
-
-type Step = 'api-key' | 'check-status' | 'test-connection';
-
-// Mock API validation functions
-const validateAPI1 = () =>
-  new Promise((resolve) => {
-    // TODO: Verify connection to Traccar instance using API URL, Username, and Password
-    setTimeout(() => resolve(Math.random() > 0.5), 1500);
-  });
-const validateAPI2 = () =>
-  new Promise((resolve) => {
-    // TODO: Verify connection to VIN Decoder Data Provider using API Key
-    setTimeout(() => resolve(Math.random() > 0.5), 1500);
-  });
-
-// Mock API fix functions
-const fixAPI1 = () =>
-  new Promise((resolve) => setTimeout(() => resolve(true), 2000));
-const fixAPI2 = () =>
-  new Promise((resolve) => setTimeout(() => resolve(true), 2000));
 
 const apiIntegrations = [
   {
@@ -65,8 +42,6 @@ const apiIntegrations = [
       'We were unable to verify connection to a Traccar instance. Please check your API URL or your Username and Password.',
     disabled: false,
     learn: '#',
-    validateFn: validateAPI1,
-    fixFn: fixAPI1,
   },
   {
     id: 2,
@@ -78,8 +53,6 @@ const apiIntegrations = [
       'We were unable to verify connection to a VIN Data Provider. Please check your provided API key.',
     disabled: false,
     learn: '#',
-    validateFn: validateAPI2,
-    fixFn: fixAPI2,
   },
 ];
 
@@ -87,14 +60,9 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const [validationStatus, setValidationStatus] = useState<
     Record<number, 'idle' | 'loading' | 'success' | 'error' | 'fixing'>
   >({});
-  const [progress1, setProgress1] = useState<Record<number, number>>({});
-  const [overallProgress, setOverallProgress] = useState(0);
 
   const [showResolveTraccarModal, setShowResolveTraccarModal] = useState(false);
   const [showResolveVinModal, setShowResolveVinModal] = useState(false);
-  const [currentStep, setCurrentStep] = useState<Step>('api-key');
-  const [progress, setProgress] = useState(0);
-  const [isChecking, setIsChecking] = useState(false);
   const [hasRun, setHasRun] = useState(false);
 
   const formVin = useForm<z.infer<typeof updateVinDecoderSchema>>({
@@ -132,8 +100,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
               await validateAPI(1);
             }
             if (attr === 'vin_decoder_key') {
-              // console.log(`Attribute ${attr} changed from ${previousDataRef.current[attr]} to ${data[attr]}`);
-              // Save the new VIN Decoder API Key to State
               setShowResolveVinModal(false);
               await validateAPI(2);
             }
@@ -146,10 +112,8 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  // Populate the form with the initial data
   useEffect(() => {
     if (data) {
-      // get username and password from traccar_api_token
       const { username, password } = decryptBase64(data.traccar_api_token);
       formTraccar.reset({
         traccar_api: data.traccar_api || '',
@@ -157,7 +121,7 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         password: password || '',
       });
       formVin.reset({ vin_decoder_key: data.vin_decoder_key || '' });
-      
+
       if (!hasRun) {
         validateAllAPIs();
         setHasRun(true);
@@ -175,8 +139,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
 
   const validateAllAPIs = async () => {
     setValidationStatus({});
-    setProgress1({});
-    setOverallProgress(0);
 
     for (const api of apiIntegrations) {
       await validateAPI(api.id);
@@ -191,7 +153,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
 
   const validateAPI = async (id: number) => {
     setValidationStatus((prev) => ({ ...prev, [id]: 'loading' }));
-    setProgress1((prev) => ({ ...prev, [id]: 0 }));
 
     switch (id) {
       case 1:
@@ -230,7 +191,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
-  // Code to verify connection to Traccar instance using API URL, Username, and Password
   const verifyTraccarConnection = async (
     apiUrl: string,
     username: string,
@@ -238,9 +198,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   ) => {
     try {
       const bearerToken = btoa(`${username}:${password}`);
-      // TODO: Do not show browser login prompt for basic auth
-      // /api/proxy/endpoint?target=http://tracktr.gavellogistics.com:8082&token=xyz&authType=basic
-      // /api/proxy/api/devices?target=${apiUrl}&token=${bearerToken}
       const response = await fetch(
         `/api/proxy/api/devices?target=${apiUrl}&token=${bearerToken}&authType=basic`,
         {
@@ -259,20 +216,12 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
-  // TODO: Try use the http-proxy-middleware package to bypass CORS issues
-  // Code to verify connection to VIN Decoder Data Provider using API Key
   const verifyVinDecoderConnection = async (apiKey: string) => {
-    // `https://auto.dev/api/vin/ZPBUA1ZL9KLA00848?apikey=${apiKey}`
     try {
-      // /api/proxy/endpoint?target=https://auto.dev/api&token=ZrQEPSkK...&authType=apikey
       const response = await fetch(
         `/api/proxy/api/vin/ZPBUA1ZL9KLA00848?target=https://auto.dev/api&token=${apiKey}&authType=bearer`,
         {
           method: 'GET',
-          // headers: {
-          //   'Access-Control-Allow-Origin': 'http://localhost:3000', // Replace with your frontend origin in production
-          //   'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          // },
         }
       );
       if (!response.ok) {
@@ -286,7 +235,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
     }
   };
 
-  // TODO: If fixAPI is called, the showResolveModal state should be set to true
   const fixAPI = async (id: number) => {
     switch (id) {
       case 1:
@@ -297,50 +245,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         break;
     }
   };
-
-  // const originalFixAPI = fixAPI;
-
-  // const fixAPI = async (id: number) => {
-  //   setValidationStatus((prev) => ({ ...prev, [id]: 'fixing' }));
-  //   setProgress1((prev) => ({ ...prev, [id]: 0 }));
-
-  //   const progressInterval = setInterval(() => {
-  //     setProgress1((prev) => {
-  //       const newProgress = Math.min((prev[id] || 0) + 5, 90);
-  //       return { ...prev, [id]: newProgress };
-  //     });
-  //   }, 100);
-
-  //   try {
-  //     const api = apiIntegrations.find((api) => api.id === id);
-  //     if (!api) throw new Error('API not found');
-  //     await api.fixFn();
-  //     await validateAPI(id);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setValidationStatus((prev) => ({ ...prev, [id]: 'error' }));
-  //   }
-
-  //   clearInterval(progressInterval);
-  // };
-
-  // useEffect(() => {
-  //   validateAllAPIs();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  useEffect(() => {
-    if (isChecking && progress < 100) {
-      const timer = setTimeout(() => {
-        setProgress((prev) => Math.min(prev + 1, 100));
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [isChecking, progress]);
-
-  // const handleUpdateApiKey = () => {
-  //   console.log('Update API Key');
-  // };
 
   return (
     <>
