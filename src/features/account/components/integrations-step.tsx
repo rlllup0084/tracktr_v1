@@ -95,11 +95,11 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const [currentStep, setCurrentStep] = useState<Step>('api-key');
   const [progress, setProgress] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
 
   const formVin = useForm<z.infer<typeof updateVinDecoderSchema>>({
     resolver: zodResolver(updateVinDecoderSchema),
     defaultValues: {
-      // ...data,
       vin_decoder_key: '',
     },
   });
@@ -107,7 +107,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const formTraccar = useForm<z.infer<typeof updateTraccarIntegrationSchema>>({
     resolver: zodResolver(updateTraccarIntegrationSchema),
     defaultValues: {
-      // ...data,
       traccar_api: '',
       username: '',
       password: '',
@@ -117,12 +116,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const previousDataRef = useRef<typeof data | null>(null);
 
   useEffect(() => {
-    console.log('Initial Data', data);
-    if (data) {
-      // setVinDecoderKey(data['vin_decoder_key']);
-      console.log('Initial VIN Decoder Key:', data['vin_decoder_key']);
-    }
-
     if (previousDataRef.current && data) {
       const changedAttributes = Object.keys(data).filter((key) => {
         return (
@@ -134,7 +127,7 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         console.log('Changed attributes:', changedAttributes);
         changedAttributes.forEach(async (attr) => {
           if (previousDataRef.current) {
-            if (attr === 'traccar_api_token') {
+            if (['traccar_api_token', 'traccar_api'].includes(attr)) {
               setShowResolveTraccarModal(false);
               await validateAPI(1);
             }
@@ -164,9 +157,21 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         password: password || '',
       });
       formVin.reset({ vin_decoder_key: data.vin_decoder_key || '' });
-      validateAllAPIs();
+      
+      if (!hasRun) {
+        validateAllAPIs();
+        setHasRun(true);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+    if (!isUpdating && previousDataRef.current) {
+      setShowResolveTraccarModal(false);
+      setShowResolveVinModal(false);
+    }
+  }, [isUpdating]);
 
   const validateAllAPIs = async () => {
     setValidationStatus({});
@@ -197,17 +202,15 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
           const { username, password } = decryptBase64(
             data['traccar_api_token']
           );
-          verifyTraccarConnection(
-            data['traccar_api'],
-            username,
-            password
-          ).then((result) => {
-            console.log('Valid Call', result);
-            setValidationStatus((prev) => ({
-              ...prev,
-              [id]: result ? 'success' : 'error',
-            }));
-          });
+          verifyTraccarConnection(data['traccar_api'], username, password).then(
+            (result) => {
+              console.log('Valid Call', result);
+              setValidationStatus((prev) => ({
+                ...prev,
+                [id]: result ? 'success' : 'error',
+              }));
+            }
+          );
         }
         break;
       case 2:
@@ -623,24 +626,6 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
                   </div>
                 </form>
               </Form>
-              {/* <label
-                      htmlFor='api-key'
-                      className='block text-sm font-medium text-white'
-                    >
-                      API Key *
-                    </label>
-                    <Input
-                      id='api-key'
-                      placeholder='Your API Key'
-                      className='bg-gray-800 border-gray-700'
-                    />
-                  </div>
-                  <Button
-                    className='w-full bg-gray-600 hover:bg-gray-500'
-                    onClick={handleUpdateApiKey}
-                  >
-                    Update API Key
-                  </Button> */}
             </div>
           </Card>
         </div>

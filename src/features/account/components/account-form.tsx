@@ -57,6 +57,14 @@ const AccountForm = () => {
     }
   }, [isUpdatingVinDecoder]);
 
+  useEffect(() => {
+    if (isUpdatingTraccarIntegration) {
+      setIsUpdating(true);
+    } else {
+      setIsUpdating(false);
+    }
+  }, [isUpdatingTraccarIntegration]);
+
   const handleNext = async (data: Account) => {
     if (currentStep === 1) {
       // if data is null, then create account else update account
@@ -71,11 +79,11 @@ const AccountForm = () => {
     if (currentStep === 2) {
       // const values = form.getValues();
       // console.log(values);
-      console.log('Update VIN Api Key', data);
+      console.log('Update Traccar data:', data);
       if (initialValues !== null) {
         const combinedData = { ...initialValues, ...data };
         // If data has attribute traccar_api_url, then update traccar integration
-        if (data['traccar_api_url']) {
+        if (data['traccar_api']) {
           updateTraccarIntegration({
             json: data,
             param: { accountId: combinedData.$id },

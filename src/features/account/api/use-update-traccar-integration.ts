@@ -27,7 +27,7 @@ export const useUpdateTraccarIntegration = () => {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success('Traccar integration updated');
+      // toast.success('Traccar integration updated');
       queryClient.invalidateQueries({ queryKey: ['account'] });
     },
     onError: () => {
