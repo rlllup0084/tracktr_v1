@@ -24,8 +24,7 @@ export const useUpdateAccount = () => {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success("Account updated");
-
+      // toast.success("Account updated");
       queryClient.invalidateQueries({ queryKey: ["account"] });
     },
     onError: () => {

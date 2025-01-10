@@ -25,6 +25,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  dummySchema,
   updateTraccarIntegrationSchema,
   updateVinDecoderSchema,
 } from '../schema';
@@ -64,6 +65,13 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const [showResolveTraccarModal, setShowResolveTraccarModal] = useState(false);
   const [showResolveVinModal, setShowResolveVinModal] = useState(false);
   const [hasRun, setHasRun] = useState(false);
+
+  const formDummy = useForm<z.infer<typeof dummySchema>>({
+    resolver: zodResolver(dummySchema),
+    defaultValues: {
+      dummy: '',
+    },
+  });
 
   const formVin = useForm<z.infer<typeof updateVinDecoderSchema>>({
     resolver: zodResolver(updateVinDecoderSchema),
@@ -343,6 +351,13 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
             </div>
           </Card>
         </div>
+
+        {/* TODO: Create a dummy Form here that could trigger onSubmit */}
+        <Form {...formDummy}>
+          <form onSubmit={formDummy.handleSubmit(onSubmit)} id='step-3-form'>
+            {/* Dummy only to trigger onSubmit */}
+          </form>
+        </Form>
 
         <p className='mt-6 text-sm text-gray-400'>
           For any failed integration, click &quot;Resolve Issue&quot; to view

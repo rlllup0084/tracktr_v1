@@ -20,6 +20,7 @@ const AccountForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isAccountSaving, setIsAccountSaving] = useState(false);
 
   const { mutate: createAccount, isPending: isCreatingAccount } =
     useCreateAccount();
@@ -66,9 +67,20 @@ const AccountForm = () => {
     }
   }, [isUpdatingTraccarIntegration]);
 
+  useEffect(() => {
+    if (isAccountSaving) {
+      if (!isCreatingAccount && !isUpdatingAccount) {
+        console.log('Account saved successfully');
+        setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
+        setIsAccountSaving(false);
+      }
+    }
+  }, [isAccountSaving, isCreatingAccount, isUpdatingAccount]);
+
   const handleNext = async (data: Account) => {
     console.log('Current Step:', currentStep);
     if (currentStep === 1) {
+      setIsAccountSaving(true);
       // if data is null, then create account else update account
       if (initialValues === null) {
         createAccount({ json: data });
@@ -76,13 +88,8 @@ const AccountForm = () => {
         const combinedData = { ...initialValues, ...data };
         updateAccount({ json: data, param: { accountId: combinedData.$id } });
       }
-      // move to the next step after 5 seconds
-      setTimeout(() => {
-        setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
-      }, 5000);
     }
     if (currentStep === 2) {
-      console.log('Update Traccar data:', data);
       if (initialValues !== null) {
         const combinedData = { ...initialValues, ...data };
         // If data has attribute traccar_api_url, then update traccar integration
@@ -96,6 +103,8 @@ const AccountForm = () => {
             json: data,
             param: { accountId: combinedData.$id },
           });
+        } else {
+          setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
         }
       }
     }
@@ -112,12 +121,12 @@ const AccountForm = () => {
   };
 
   const handleSubmit = () => {
-    setIsLoading(true);
-    // Simulating an API call or some async operation
-    setTimeout(() => {
-      // Route to the integrations page after showing the loading modal for 3 seconds
-      setIsLoading(false);
-    }, 3000);
+    // setIsLoading(true);
+    // // Simulating an API call or some async operation
+    // setTimeout(() => {
+    //   // Route to the integrations page after showing the loading modal for 3 seconds
+    //   setIsLoading(false);
+    // }, 3000);
   };
 
   return (
@@ -155,6 +164,7 @@ const AccountForm = () => {
             <Button
               form={`step-${currentStep + 1}-form`}
               type='submit'
+              disabled={isUpdating}
               className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             >
               {currentStep === accountSteps.length - 1 ? (

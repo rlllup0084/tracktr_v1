@@ -20,7 +20,7 @@ export const useCreateAccount = () => {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success('Account created');
+      // toast.success('Account created');
       queryClient.invalidateQueries({ queryKey: ['account'] });
     },
     onError: () => {

@@ -80,3 +80,8 @@ export const updateVinDecoderSchema = z.object({
     .string()
     .nonempty({ message: 'VIN Decoder key is required.' }),
 });
+
+export const dummySchema = z.object({
+  dummy: z
+    .string(),
+});
