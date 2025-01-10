@@ -18,42 +18,51 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { createAccountSchema } from '../schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { AccountStepProps } from '../interface';
 import { useEffect } from 'react';
+import {
+  CompanyRoleEnum,
+  FleetSizeEnum,
+  IndustryEnum,
+} from '../types';
+
+interface FormData {
+  company_name: string;
+  fleet_size: string;
+  industry: string;
+  company_role: string;
+  goals: string;
+  enable_demo_data: boolean;
+  steps_done: number;
+}
 
 const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
-  const form = useForm<z.infer<typeof createAccountSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
       company_name: '',
-      fleet_size: '51-100',
-      industry: 'logistics',
-      company_role: 'owner',
+      fleet_size: '',
+      industry: '',
+      company_role: '',
       goals: '',
       enable_demo_data: false,
       steps_done: 1,
     },
   });
 
-  // ...initialValues,
-  //     image: initialValues.imageUrl ?? "",
-
-  useEffect(() => {
-    console.log('Initial Data', data);
-  }, [data])
-
   // Populate the form with the initial data
   useEffect(() => {
     if (data) {
+      console.log('Initial Data', data);
+      console.log('Industry', data.industry);
       form.reset(data);
+      console.log('Initial Form Data', form.getValues());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, form]);
 
   return (
     <>
@@ -102,24 +111,23 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        value={field.value}
                         className='grid grid-cols-2 md:grid-cols-4 gap-3'
                       >
-                        {Object.values(
-                          createAccountSchema.shape.fleet_size._def.values
-                        ).map((size) => (
-                          <FormItem key={size}>
+                        {Object.entries(FleetSizeEnum).map(([key, value]) => (
+                          <FormItem key={key}>
                             <FormControl>
                               <RadioGroupItem
-                                value={size}
+                                value={value}
                                 className='peer sr-only'
-                                id={`fleet-size-${size}`}
+                                id={`fleet-size-${value}`}
                               />
                             </FormControl>
                             <FormLabel
-                              htmlFor={`fleet-size-${size}`}
+                              htmlFor={`fleet-size-${value}`}
                               className='flex flex-col items-center justify-between rounded-md border-2 border-input bg-transparent p-4 hover:bg-none hover:border-zinc-600 hover:text-accent-foreground peer-data-[state=checked]:border-zinc-600 [&:has([data-state=checked])]:border-zinc-600'
                             >
-                              {size}
+                              {value}
                             </FormLabel>
                           </FormItem>
                         ))}
@@ -141,6 +149,7 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -148,11 +157,9 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(
-                          createAccountSchema.shape.industry._def.values
-                        ).map((industry) => (
-                          <SelectItem key={industry} value={industry}>
-                            {industry
+                        {Object.entries(IndustryEnum).map(([key, value]) => (
+                          <SelectItem key={key} value={value}>
+                            {value
                               .split('_')
                               .map(
                                 (word) =>
@@ -179,6 +186,7 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -186,11 +194,9 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(
-                          createAccountSchema.shape.company_role._def.values
-                        ).map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {role
+                        {Object.entries(CompanyRoleEnum).map(([key, value]) => (
+                          <SelectItem key={key} value={value}>
+                            {value
                               .split('_')
                               .map(
                                 (word) =>
@@ -260,12 +266,6 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
                 your company&apos;s needs and help you get the most out of
                 TrackTr.
               </p>
-              {/* <Button
-                type='submit'
-                className='w-full bg-gray-600 hover:bg-gray-500'
-              >
-                Continue
-              </Button> */}
             </div>
           </form>
         </Form>
