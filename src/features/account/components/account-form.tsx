@@ -12,6 +12,7 @@ import { useGetAccount } from '../api/use-get-account';
 import { Account } from '../types';
 import { useUpdateAccount } from '../api/use-update-account';
 import { useUpdateTraccarIntegration } from '../api/use-update-traccar-integration';
+import { Loader2 } from 'lucide-react';
 
 const AccountForm = () => {
   const { data: initialValues, isLoadingValue } = useGetAccount();
@@ -43,9 +44,9 @@ const AccountForm = () => {
 
   useEffect(() => {
     if (isUpdatingAccount) {
-      setIsLoading(true);
+      setIsUpdating(true);
     } else {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
   }, [isUpdatingAccount]);
 
@@ -66,6 +67,7 @@ const AccountForm = () => {
   }, [isUpdatingTraccarIntegration]);
 
   const handleNext = async (data: Account) => {
+    console.log('Current Step:', currentStep);
     if (currentStep === 1) {
       // if data is null, then create account else update account
       if (initialValues === null) {
@@ -74,6 +76,10 @@ const AccountForm = () => {
         const combinedData = { ...initialValues, ...data };
         updateAccount({ json: data, param: { accountId: combinedData.$id } });
       }
+      // move to the next step after 5 seconds
+      setTimeout(() => {
+        setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
+      }, 5000);
     }
     if (currentStep === 2) {
       console.log('Update Traccar data:', data);
@@ -151,7 +157,16 @@ const AccountForm = () => {
               type='submit'
               className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             >
-              {currentStep === accountSteps.length - 1 ? 'Finish' : 'Continue'}
+              {currentStep === accountSteps.length - 1 ? (
+                'Finish'
+              ) : isUpdating ? (
+                <>
+                  <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                  Updating...
+                </>
+              ) : (
+                'Continue'
+              )}
             </Button>
           </div>
         </div>

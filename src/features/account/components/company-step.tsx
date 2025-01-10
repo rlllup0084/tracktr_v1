@@ -45,13 +45,9 @@ const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
     },
   });
 
-  // Populate the form with the initial data
   useEffect(() => {
     if (data) {
-      console.log('Initial Data', data);
-      console.log('Industry', data.industry);
       form.reset(data);
-      console.log('Initial Form Data', form.getValues());
     }
   }, [data, form]);
 
