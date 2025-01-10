@@ -16,7 +16,7 @@ import { useUpdateTraccarIntegration } from '../api/use-update-traccar-integrati
 const AccountForm = () => {
   const { data: initialValues, isLoadingValue } = useGetAccount();
 
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -75,10 +75,7 @@ const AccountForm = () => {
         updateAccount({ json: data, param: { accountId: combinedData.$id } });
       }
     }
-    // TODO: If current component is IntegrationsStep, do data processing....
     if (currentStep === 2) {
-      // const values = form.getValues();
-      // console.log(values);
       console.log('Update Traccar data:', data);
       if (initialValues !== null) {
         const combinedData = { ...initialValues, ...data };
@@ -96,15 +93,11 @@ const AccountForm = () => {
         }
       }
     }
-    // TODO: If current component is VehiclesStep, do data processing....
     if (currentStep === 3) {
-      // const values = form.getValues();
-      // console.log(values);
+      // TODO: Adding initial vehicles step
     }
-    // TODO: If current component is ReadyStep, do data processing....
     if (currentStep === 4) {
-      // const values = form.getValues();
-      // console.log(values);
+      // TODO: Adding last step to finish the account creation
     }
   };
 

@@ -25,29 +25,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { AccountStepProps } from '../interface';
 import { useEffect } from 'react';
 import {
+  Account,
   CompanyRoleEnum,
   FleetSizeEnum,
   IndustryEnum,
 } from '../types';
 
-interface FormData {
-  company_name: string;
-  fleet_size: string;
-  industry: string;
-  company_role: string;
-  goals: string;
-  enable_demo_data: boolean;
-  steps_done: number;
-}
-
 const CompanyStep = ({ onSubmit, data }: AccountStepProps) => {
-  const form = useForm<FormData>({
+  const form = useForm<Account>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
       company_name: '',
-      fleet_size: '',
-      industry: '',
-      company_role: '',
+      fleet_size: "51-100",
+      industry: 'logistics',
+      company_role: 'owner',
       goals: '',
       enable_demo_data: false,
       steps_done: 1,
