@@ -5,6 +5,7 @@ import {
   Github,
   Linkedin,
   Twitter,
+  X,
   Youtube,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -58,6 +59,10 @@ const ProgressSidebar = ({ currentStep }: ProgressSidebarProps) => {
             </li>
           ))}
         </ul>
+
+        <p className="text-xs text-gray-400 mt-4">
+            Note: Steps marked with <X className="inline h-4 w-4 text-yellow-500" /> have been skipped. You can always come back to complete them later.
+          </p>
 
         <div className='mt-6 flex justify-center lg:justify-start space-x-4 w-full'>
           <Link href='#' className='text-gray-400 hover:text-white'>
