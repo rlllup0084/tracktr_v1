@@ -11,10 +11,15 @@ import {
 import Link from 'next/link';
 
 interface ProgressSidebarProps {
-  currentStep: number
+  currentStep: number;
+  skippedStep: number[];
 }
 
-const ProgressSidebar = ({ currentStep }: ProgressSidebarProps) => {
+// how to do array of numbers ex 2,4, and 6
+// const skippedStep = [2, 4, 6];
+
+const ProgressSidebar = ({ currentStep, skippedStep }: ProgressSidebarProps) => {
+  // console.log('Skipped steps:', skippedStep);
   return (
     <div className='w-full lg:w-80 flex-shrink-0 bg-zinc-900/50 p-6 flex flex-col items-center lg:items-start'>
       <div className='space-y-6 w-full text-center lg:text-left'>
@@ -35,6 +40,8 @@ const ProgressSidebar = ({ currentStep }: ProgressSidebarProps) => {
               <div className='flex h-6 w-6 shrink-0 items-center justify-center relative z-10 bg-gray-900'>
                 {index < currentStep ? (
                   <CheckCircle2 className='h-6 w-6 text-green-500' />
+                ) : (skippedStep ?? []).includes(index) ? (
+                  <X className='h-6 w-6 text-yellow-500' />
                 ) : index === currentStep ? (
                   <div className='h-4 w-4 rounded-full bg-white' />
                 ) : (
@@ -60,9 +67,11 @@ const ProgressSidebar = ({ currentStep }: ProgressSidebarProps) => {
           ))}
         </ul>
 
-        <p className="text-xs text-gray-400 mt-4">
-            Note: Steps marked with <X className="inline h-4 w-4 text-yellow-500" /> have been skipped. You can always come back to complete them later.
-          </p>
+        <p className='text-xs text-gray-400 mt-4'>
+          Note: Steps marked with{' '}
+          <X className='inline h-4 w-4 text-yellow-500' /> have been skipped.
+          You can always come back to complete them later.
+        </p>
 
         <div className='mt-6 flex justify-center lg:justify-start space-x-4 w-full'>
           <Link href='#' className='text-gray-400 hover:text-white'>
