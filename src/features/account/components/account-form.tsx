@@ -26,6 +26,7 @@ const AccountForm = () => {
   const [stepsSkippedArray, setStepsSkippedArray] = useState<number[]>([]);
   const [failedIntegrations, setfailedIntegrations] = useState<number[]>([]);
   const [failedApiIds, setFailedApiIds] = useState<number[]>([]);
+  const [vehiclesCount, setVehiclesCount] = useState(0);
 
   const { mutate: createAccount, isPending: isCreatingAccount } =
     useCreateAccount();
@@ -39,6 +40,11 @@ const AccountForm = () => {
   } = useUpdateTraccarIntegration();
 
   const CurrentStepComponent = accountSteps[currentStep].component;
+
+  useEffect(() => {
+    const combinedData = { ...(initialValues || {}), ...(currentData || {}) };
+    console.log('Current Data:', combinedData);
+  }, [currentData, initialValues]);
 
   useEffect(() => {
     if (isCreatingAccount) {
@@ -75,7 +81,10 @@ const AccountForm = () => {
   useEffect(() => {
     if (isAccountSaving) {
       if (!isCreatingAccount && !isUpdatingAccount) {
-        setStepsDoneArray((prev) => [...prev, currentStep]);
+        // setStepsDoneArray((prev) => [...prev, currentStep]);
+        setStepsDoneArray((prev) =>
+          prev.includes(currentStep) ? prev : [...prev, currentStep]
+        );
         setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
         setIsAccountSaving(false);
       }
@@ -86,8 +95,7 @@ const AccountForm = () => {
   useEffect(() => {
     console.log('Steps Done:', stepsDoneArray);
     console.log('Steps Skipped:', stepsSkippedArray);
-  }, [stepsDoneArray, stepsSkippedArray])
-  
+  }, [stepsDoneArray, stepsSkippedArray]);
 
   const handleNext = async (data: Account) => {
     console.log('Current Step:', currentStep);
@@ -119,8 +127,26 @@ const AccountForm = () => {
           });
         } else {
           setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
+          if (failedApiIds.length > 0) {
+            // add current step to skipped array if failed API IDs exist
+            if (!stepsSkippedArray.includes(currentStep)) {
+              setStepsSkippedArray((prev) => [...prev, currentStep]);
+            }
+          } else {
+            // remove current step from skipped array if it was skipped before
+            const index = stepsSkippedArray.indexOf(currentStep);
+            if (index > -1) {
+              stepsSkippedArray.splice(index, 1);
+              setStepsSkippedArray(stepsSkippedArray);
+            }
+            // setStepsDoneArray((prev) => [...prev, currentStep]);
+            setStepsDoneArray((prev) =>
+              prev.includes(currentStep) ? prev : [...prev, currentStep]
+            );
+          }
         }
       }
+      console.log('Initial Values:', initialValues);
     }
     if (currentStep === 3) {
       // TODO: Adding initial vehicles step
@@ -128,6 +154,10 @@ const AccountForm = () => {
     if (currentStep === 4) {
       // TODO: Adding last step to finish the account creation
     }
+    // console log initial values after press skip in step 2
+    // if (currentStep === 2 && failedApiIds.length > 0) {
+    //   console.log('Initial Values:', initialValues);
+    // }
   };
 
   const handlePrevious = () => {
@@ -187,18 +217,30 @@ const AccountForm = () => {
               disabled={isUpdating}
               className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             >
-                {currentStep === accountSteps.length - 1 ? (
-                'Finish'
-                ) : isUpdating ? (
+              {isUpdating ? (
                 <>
                   <Loader2 className='mr-2 h-5 w-5 animate-spin' />
                   Updating...
                 </>
-                ) : failedApiIds.length > 0 ? (
-                'Skip'
-                ) : (
+              ) : currentStep === 4 ? (
+                'Finish'
+              ) : currentStep === 1 ? (
                 'Continue'
-                )}
+              ) : currentStep === 2 ? (
+                failedApiIds.length === 0 ? (
+                  'Continue'
+                ) : (
+                  'Skip'
+                )
+              ) : currentStep === 3 ? (
+                vehiclesCount > 0 ? (
+                  'Continue'
+                ) : (
+                  'Skip'
+                )
+              ) : (
+                'Continue'
+              )}
             </Button>
           </div>
         </div>
