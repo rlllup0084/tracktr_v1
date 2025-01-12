@@ -25,7 +25,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  dummySchema,
+  updateStepsSchema,
   updateTraccarIntegrationSchema,
   updateVinDecoderSchema,
 } from '../schema';
@@ -57,7 +57,7 @@ const apiIntegrations = [
   },
 ];
 
-const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
+const IntegrationsStep = ({ onSubmit, isUpdating, data, onFailedApiIdsChange}: AccountStepProps) => {
   const [validationStatus, setValidationStatus] = useState<
     Record<number, 'idle' | 'loading' | 'success' | 'error' | 'fixing'>
   >({});
@@ -65,11 +65,17 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
   const [showResolveTraccarModal, setShowResolveTraccarModal] = useState(false);
   const [showResolveVinModal, setShowResolveVinModal] = useState(false);
   const [hasRun, setHasRun] = useState(false);
+  const [failedApiIds, setFailedApiIds] = useState<number[]>([]);
 
-  const formDummy = useForm<z.infer<typeof dummySchema>>({
-    resolver: zodResolver(dummySchema),
+  useEffect(() => {
+    onFailedApiIdsChange(failedApiIds);
+  }, [failedApiIds, onFailedApiIdsChange]);
+
+  const formUpdateSteps = useForm<z.infer<typeof updateStepsSchema>>({
+    resolver: zodResolver(updateStepsSchema),
     defaultValues: {
-      dummy: '',
+      steps_done_array: [],
+      steps_skipped_array: [],
     },
   });
 
@@ -174,6 +180,15 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
           verifyTraccarConnection(data['traccar_api'], username, password).then(
             (result) => {
               console.log('Valid Call', result);
+              if (!result) {
+                setFailedApiIds(prev => 
+                  prev.includes(id) ? prev : [...prev, id]
+                );
+              } else {
+                setFailedApiIds(prev => 
+                  prev.filter(apiId => apiId !== id)
+                );
+              }
               setValidationStatus((prev) => ({
                 ...prev,
                 [id]: result ? 'success' : 'error',
@@ -189,6 +204,15 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         } else {
           verifyVinDecoderConnection(data['vin_decoder_key']).then((result) => {
             console.log('Valid Call', result);
+            if (!result) {
+              setFailedApiIds(prev => 
+                prev.includes(id) ? prev : [...prev, id]
+              );
+            } else {
+              setFailedApiIds(prev => 
+                prev.filter(apiId => apiId !== id)
+              );
+            }
             setValidationStatus((prev) => ({
               ...prev,
               [id]: result ? 'success' : 'error',
@@ -353,8 +377,8 @@ const IntegrationsStep = ({ onSubmit, isUpdating, data }: AccountStepProps) => {
         </div>
 
         {/* TODO: Create a dummy Form here that could trigger onSubmit */}
-        <Form {...formDummy}>
-          <form onSubmit={formDummy.handleSubmit(onSubmit)} id='step-3-form'>
+        <Form {...formUpdateSteps}>
+          <form onSubmit={formUpdateSteps.handleSubmit(onSubmit)} id='step-3-form'>
             {/* Dummy only to trigger onSubmit */}
           </form>
         </Form>

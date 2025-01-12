@@ -21,6 +21,11 @@ const AccountForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isAccountSaving, setIsAccountSaving] = useState(false);
+  const [currentData, setCurrentData] = useState<Account | null>(null);
+  const [stepsDoneArray, setStepsDoneArray] = useState<number[]>([]);
+  const [stepsSkippedArray, setStepsSkippedArray] = useState<number[]>([]);
+  const [failedIntegrations, setfailedIntegrations] = useState<number[]>([]);
+  const [failedApiIds, setFailedApiIds] = useState<number[]>([]);
 
   const { mutate: createAccount, isPending: isCreatingAccount } =
     useCreateAccount();
@@ -70,12 +75,19 @@ const AccountForm = () => {
   useEffect(() => {
     if (isAccountSaving) {
       if (!isCreatingAccount && !isUpdatingAccount) {
-        console.log('Account saved successfully');
+        setStepsDoneArray((prev) => [...prev, currentStep]);
         setCurrentStep((prev) => Math.min(prev + 1, accountSteps.length - 1));
         setIsAccountSaving(false);
       }
     }
-  }, [isAccountSaving, isCreatingAccount, isUpdatingAccount]);
+  }, [isAccountSaving, isCreatingAccount, isUpdatingAccount, currentStep]);
+
+  // Temporary console log to show steps done
+  useEffect(() => {
+    console.log('Steps Done:', stepsDoneArray);
+    console.log('Steps Skipped:', stepsSkippedArray);
+  }, [stepsDoneArray, stepsSkippedArray])
+  
 
   const handleNext = async (data: Account) => {
     console.log('Current Step:', currentStep);
@@ -86,12 +98,14 @@ const AccountForm = () => {
         createAccount({ json: data });
       } else {
         const combinedData = { ...initialValues, ...data };
+        setCurrentData(combinedData);
         updateAccount({ json: data, param: { accountId: combinedData.$id } });
       }
     }
     if (currentStep === 2) {
       if (initialValues !== null) {
         const combinedData = { ...initialValues, ...data };
+        setCurrentData(combinedData);
         // If data has attribute traccar_api_url, then update traccar integration
         if (data['traccar_api']) {
           updateTraccarIntegration({
@@ -129,10 +143,15 @@ const AccountForm = () => {
     // }, 3000);
   };
 
+  const handleFailedApiIds = (ids: number[]) => {
+    console.log('Failed API IDs from:', ids);
+    setFailedApiIds(ids);
+  };
+
   return (
     <>
       {/* Step progress pane */}
-      <ProgressSidebar currentStep={currentStep} />
+      <ProgressSidebar currentStep={currentStep} skippedStep={[]} />
       {/* Step forms */}
       <div className='flex-grow px-4 py-8 lg:px-8'>
         <div className='mx-auto max-w-2xl'>
@@ -151,6 +170,7 @@ const AccountForm = () => {
             }
             isUpdating={isUpdating}
             data={initialValues}
+            onFailedApiIdsChange={handleFailedApiIds}
           />
           <div className='w-full flex flex-col lg:flex-row justify-between mt-8 space-y-4 lg:space-y-0 lg:space-x-4'>
             <Button
@@ -167,16 +187,18 @@ const AccountForm = () => {
               disabled={isUpdating}
               className='w-full h-12 px-6 py-3 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white text-md font-semibold rounded-md transition duration-200'
             >
-              {currentStep === accountSteps.length - 1 ? (
+                {currentStep === accountSteps.length - 1 ? (
                 'Finish'
-              ) : isUpdating ? (
+                ) : isUpdating ? (
                 <>
                   <Loader2 className='mr-2 h-5 w-5 animate-spin' />
                   Updating...
                 </>
-              ) : (
+                ) : failedApiIds.length > 0 ? (
+                'Skip'
+                ) : (
                 'Continue'
-              )}
+                )}
             </Button>
           </div>
         </div>

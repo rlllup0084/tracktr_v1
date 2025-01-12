@@ -5,6 +5,7 @@ import { Hono } from 'hono';
 import {
   createAccountSchema,
   updateExpiryAndLimitSchema,
+  updateStepsSchema,
   updateTraccarIntegrationSchema,
   updateVinDecoderSchema,
 } from '../schema';
@@ -216,6 +217,36 @@ const app = new Hono()
 
       return c.json({ data: accounts });
     }
-  );
+  )
+  //  Update steps done and skipped
+  .patch(
+    '/:accountId/steps',
+    zValidator('json', updateStepsSchema),
+    sessionMiddleware,
+    async (c) => {
+      const databases = c.get('databases');
+      const user = c.get("user");
+      const { steps_done_array, steps_skipped_array } = c.req.valid('json');
+
+      const { accountId } = c.req.param();
+
+      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+
+      if (account.owner !== user.$id) {
+        return c.json({ error: 'Unauthorized' }, 403);
+      }
+
+      const accounts = await databases.updateDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId,
+        {
+          steps_done_array,
+          steps_skipped_array,
+        }
+      );
+
+      return c.json({ data: accounts });
+    });
 
 export default app;

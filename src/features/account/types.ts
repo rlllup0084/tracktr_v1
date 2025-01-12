@@ -89,4 +89,6 @@ export type Account = Models.Document & {
   traccar_api: string;
   username: string;
   vin_decoder_key: string;
+  steps_done_array: number[];
+  steps_skipped_array: number[];
 };

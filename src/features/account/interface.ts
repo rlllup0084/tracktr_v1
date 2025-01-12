@@ -7,4 +7,5 @@ export interface AccountStepProps {
     onSubmit: () => void;
     isUpdating: boolean;
     data: Account;
+    onFailedApiIdsChange: (ids: number[]) => void;
 }

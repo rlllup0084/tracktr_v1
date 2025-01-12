@@ -50,6 +50,8 @@ export const createAccountSchema = z.object({
     .number()
     .int()
     .min(0, { message: 'Steps Done must be a non-negative integer.' }),
+  steps_done_array: z.array(z.number().int()),
+  steps_skipped_array: z.array(z.number().int()),
 });
 
 export const updateExpiryAndLimitSchema = z.object({
@@ -81,7 +83,7 @@ export const updateVinDecoderSchema = z.object({
     .nonempty({ message: 'VIN Decoder key is required.' }),
 });
 
-export const dummySchema = z.object({
-  dummy: z
-    .string(),
+export const updateStepsSchema = z.object({
+  steps_done_array: z.array(z.number().int()),
+  steps_skipped_array: z.array(z.number().int()),
 });
