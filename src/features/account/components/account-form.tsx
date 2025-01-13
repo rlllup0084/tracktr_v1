@@ -17,7 +17,7 @@ import { Loader2 } from 'lucide-react';
 const AccountForm = () => {
   const { data: initialValues, isLoadingValue } = useGetAccount();
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isAccountSaving, setIsAccountSaving] = useState(false);
