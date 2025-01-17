@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 const TrackingPage = async () => {
   const user = await getCurrent();
   const account = await getAccount();
+
   if (!user) {
     redirect("/login");
   } else if (!user.emailVerification) {

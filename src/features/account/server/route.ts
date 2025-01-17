@@ -14,24 +14,23 @@ import { AppwriteException, ID, Query } from 'node-appwrite';
 const app = new Hono()
   .get('/', sessionMiddleware, async (c) => {
     const databases = c.get('databases');
-    const user = c.get("user");
+    const user = c.get('user');
 
     try {
-      const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID,
-        [Query.equal("owner", user.$id)]
-      );
-  
+      const accounts = await databases.listDocuments(DATABASE_ID, ACCOUNTS_ID, [
+        Query.equal('owner', user.$id),
+      ]);
+
       if (accounts.documents.length > 0) {
         return c.json(accounts.documents[0]);
       } else {
-        return c.json({ message: "Account not yet created" });
+        return c.json({ message: 'Account not yet created' });
       }
     } catch (error) {
-      if (
-        (error as AppwriteException).type === 'general_unauthorized_scope'
-      ) {
+      if ((error as AppwriteException).type === 'general_unauthorized_scope') {
         return c.json({ error: 'Unauthorized access' }, 401);
       }
+      return c.json({ error: 'Internal server error' }, 500);
     }
   })
   .post(
@@ -40,7 +39,7 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
-      const user = c.get("user");
+      const user = c.get('user');
       const {
         company_name,
         fleet_size,
@@ -76,7 +75,7 @@ const app = new Hono()
           enable_demo_data,
           trial_expiry_date: trialExpiryDate.toISOString(),
           owner: user.$id,
-          steps_done
+          steps_done,
         }
       );
 
@@ -90,7 +89,7 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
-      const user = c.get("user");
+      const user = c.get('user');
       const { accountId } = c.req.param();
       const {
         company_name,
@@ -102,7 +101,11 @@ const app = new Hono()
         steps_done,
       } = c.req.valid('json');
 
-      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+      const account = await databases.getDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId
+      );
 
       if (account.owner !== user.$id) {
         return c.json({ error: 'Unauthorized' }, 403);
@@ -132,12 +135,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
-      const user = c.get("user");
+      const user = c.get('user');
       const { trial_expiry_date, asset_limit } = c.req.valid('json');
 
       const { accountId } = c.req.param();
 
-      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+      const account = await databases.getDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId
+      );
 
       if (account.owner !== user.$id) {
         return c.json({ error: 'Unauthorized' }, 403);
@@ -162,12 +169,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
-      const user = c.get("user");
+      const user = c.get('user');
       const { traccar_api, username, password } = c.req.valid('json');
 
       const { accountId } = c.req.param();
 
-      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+      const account = await databases.getDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId
+      );
 
       if (account.owner !== user.$id) {
         return c.json({ error: 'Unauthorized' }, 403);
@@ -195,12 +206,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
-      const user = c.get("user");
+      const user = c.get('user');
       const { vin_decoder_key } = c.req.valid('json');
 
       const { accountId } = c.req.param();
 
-      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+      const account = await databases.getDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId
+      );
 
       if (account.owner !== user.$id) {
         return c.json({ error: 'Unauthorized' }, 403);
@@ -225,12 +240,16 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get('databases');
-      const user = c.get("user");
+      const user = c.get('user');
       const { steps_done_array, steps_skipped_array } = c.req.valid('json');
 
       const { accountId } = c.req.param();
 
-      const account = await databases.getDocument(DATABASE_ID, ACCOUNTS_ID, accountId);
+      const account = await databases.getDocument(
+        DATABASE_ID,
+        ACCOUNTS_ID,
+        accountId
+      );
 
       if (account.owner !== user.$id) {
         return c.json({ error: 'Unauthorized' }, 403);
@@ -247,6 +266,7 @@ const app = new Hono()
       );
 
       return c.json({ data: accounts });
-    });
+    }
+  );
 
 export default app;
