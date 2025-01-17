@@ -22,7 +22,7 @@ export const useLogin = () => {
 
       if (!response.ok) {
         const errorDetails = await response.json();
-        toast.error(`Failed to register`, { description: errorDetails.message });
+        toast.error(`Failed to log-in`, { description: errorDetails.message });
       }
 
       return await response.json();

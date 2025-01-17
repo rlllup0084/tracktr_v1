@@ -55,7 +55,7 @@ const app = new Hono()
       if (makers.documents.length > 0) {
         return c.json(makers.documents);
       } else {
-        return c.json({ message: 'No maker found' });
+        return c.json({ message: 'No makers found' });
       }
     } catch (error) {
       if ((error as AppwriteException).type === 'general_unauthorized_scope') {
@@ -78,7 +78,7 @@ const app = new Hono()
       if (bodyTypes.documents.length > 0) {
         return c.json(bodyTypes.documents);
       } else {
-        return c.json({ message: 'No body type found' });
+        return c.json({ message: 'No body types found' });
       }
     } catch (error) {
       if ((error as AppwriteException).type === 'general_unauthorized_scope') {
@@ -101,7 +101,7 @@ const app = new Hono()
       if (vehicleTypes.documents.length > 0) {
         return c.json(vehicleTypes.documents);
       } else {
-        return c.json({ message: 'No vehicle type found' });
+        return c.json({ message: 'No vehicle types found' });
       }
     } catch (error) {
       if ((error as AppwriteException).type === 'general_unauthorized_scope') {
@@ -124,7 +124,7 @@ const app = new Hono()
       if (driveTypes.documents.length > 0) {
         return c.json(driveTypes.documents);
       } else {
-        return c.json({ message: 'No drive type found' });
+        return c.json({ message: 'No drive types found' });
       }
     } catch (error) {
       if ((error as AppwriteException).type === 'general_unauthorized_scope') {
@@ -147,7 +147,7 @@ const app = new Hono()
       if (primaryBodyTypes.documents.length > 0) {
         return c.json(primaryBodyTypes.documents);
       } else {
-        return c.json({ message: 'No primary body type found' });
+        return c.json({ message: 'No primary body types found' });
       }
     } catch (error) {
       if ((error as AppwriteException).type === 'general_unauthorized_scope') {
