@@ -16,6 +16,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import VehicleInfoModal from './vehicle-info-modal';
+import { useGetAccount } from '@/features/account/api/use-get-account';
+import { parse } from 'path';
+import { parseVehicleData } from '../utils/parseVehicleData';
 
 const formSchema = z.object({
   vin: z
@@ -32,6 +35,8 @@ const VinDecoderForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { data: accountValues, isLoading: isLoadingAccount } = useGetAccount();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,12 +45,29 @@ const VinDecoderForm = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const account = Array.isArray(accountValues) ? accountValues[0] : accountValues;
+    if (!account?.vin_decoder_key) {
+      console.error('VIN decoder key is not available');
+      return;
+    }
+    
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/decode-vin?vin=${values.vin}`);
-      const data = await response.json();
-      setVehicleData(data);
-      setIsModalOpen(true);
+      // const response = await fetch(`/api/decode-vin?vin=${values.vin}`);
+      const response = await fetch(
+        `/api/proxy/api/vin/${values.vin}?target=https://auto.dev/api&token=${account.vin_decoder_key}&authType=bearer`,
+        {
+          method: 'GET',
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log('VIN decoded data:', data);
+        const parsedData = parseVehicleData(data);
+        console.log('Parsed vehicle data:', parsedData);
+        setVehicleData(parsedData);
+        setIsModalOpen(true);
+      }
     } catch (error) {
       console.error('Error fetching VIN data:', error);
     } finally {
@@ -82,7 +104,7 @@ const VinDecoderForm = ({
           <Button
             type='submit'
             disabled={isLoading}
-            className='w-full text-lg py-6'
+            className='w-full h-12 px-6 py-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white text-md font-semibold rounded-md transition duration-200'
           >
             {isLoading ? 'Decoding...' : 'Decode VIN'}
           </Button>

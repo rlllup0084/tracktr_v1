@@ -1,3 +1,4 @@
+import { vehicle } from '@/features/vehicles/server/route';
 import {
   DATABASE_ID,
   VEHICLE_BODY_TYPE_ID,
@@ -16,8 +17,10 @@ import {
   VEHICLES_ID,
 } from '@/config';
 import { sessionMiddleware } from '@/lib/session-middleware';
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { AppwriteException, Query } from 'node-appwrite';
+import { AppwriteException, ID, Query } from 'node-appwrite';
+import { createVehicleSchema } from '../schema';
 
 const app = new Hono()
   .get('/', sessionMiddleware, async (c) => {
@@ -38,6 +41,66 @@ const app = new Hono()
       if ((error as AppwriteException).type === 'general_unauthorized_scope') {
         return c.json({ error: 'Unauthorized access' }, 401);
       }
+      return c.json({ error: 'Internal server error' }, 500);
+    }
+  })
+  .post('/',zValidator('json', createVehicleSchema), sessionMiddleware, async (c) => {
+    const databases = c.get('databases');
+    const user = c.get('user');
+    const {
+      vehicle_name,
+      vin,
+      make,
+      model,
+      year,
+      body_type,
+      vehicle_type,
+      drive_type,
+      number_of_doors,
+      primary_body_type,
+      vehicle_size,
+      market_class,
+      epa_class,
+      engine_name,
+      engine_type,
+      horsepower,
+      torque,
+      cylinders,
+      displacement,
+      fuel_type,
+      compression_ratio,
+      compressor_type,
+      engine_configuration,
+      engine_code,
+      manufacturer_engine_code,
+      fuel_capacity,
+      rpm,
+      valve_timing,
+      valve_gear,
+      total_valves,
+      transmission_type,
+      number_of_speeds,
+      transmission_name,
+      city_economy,
+      highway_economy,
+    } = c.req.valid('json');
+
+    try {
+      const vehicle = await databases.createDocument(
+        DATABASE_ID,
+        VEHICLES_ID,
+        ID.unique(),
+        {
+          vehicle_name,
+          owner: user.$id,
+          vin,
+          make,
+          model,
+        }
+      );
+
+      return c.json(vehicle);
+    } catch (error) {
       return c.json({ error: 'Internal server error' }, 500);
     }
   })
