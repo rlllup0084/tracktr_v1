@@ -16,10 +16,12 @@ import {
   VinVehicleData,
   vinVehicleDataSchema,
 } from '../utils/parseVehicleData';
-import { Truck } from 'lucide-react';
+import { Check, Edit2, Truck } from 'lucide-react';
 import { SpecItem } from '../interfaces';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 const VehicleInfoModal = ({
   isOpen,
@@ -269,23 +271,36 @@ const VehicleInfoModal = ({
       <div className="space-y-4">
         {vehicleSpecs.map((spec, index) => (
           <div key={index} className="flex justify-between items-center">
-            <label className="font-medium">{spec.label}:</label>
-            {spec.valueType === 'selection' ? (
-              <select className="p-2 border rounded">
-                <option value="">{spec.value}</option>
-              </select>
-            ) : (
-              <input
-                type="text"
-                defaultValue={spec.value}
-                className="p-2 border rounded"
-              />
-            )}
+            <FormField
+              control={form.control}
+              name={`${spec.label.toLowerCase().replace(/\s+/g, '')}`}
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel className="font-medium">{spec.label}</FormLabel>
+                  {spec.valueType === 'selection' ? (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={spec.value} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={spec.value}>{spec.value}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <FormControl>
+                      <Input {...field} defaultValue={spec.value} />
+                    </FormControl>
+                  )}
+                </FormItem>
+              )}
+            />
           </div>
         ))}
       </div>
     );
-  }
+  };
 
   const renderReviewFields = () => {
     return (
@@ -329,8 +344,47 @@ const VehicleInfoModal = ({
               </div>
             </ScrollArea>
           </form>
+          <p className="text-sm text-gray-400">
+              {isEditing
+                ? "You can make adjustments if needed, or confirm to proceed."
+                : "Please review the information and confirm if it's correct."}
+            </p>
+
+            <div className="flex gap-3 pt-4">
+              {isEditing ? (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1 bg-transparent hover:bg-gray-700"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="flex-1 bg-gray-500 hover:bg-gray-600">
+                    Review
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1 bg-transparent hover:bg-gray-700"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button type="submit" className="flex-1 bg-gray-500 hover:bg-gray-600">
+                    <Check className="w-4 h-4 mr-2" />
+                    Confirm
+                  </Button>
+                </>
+              )}
+            </div>
         </Form>
-        <DialogFooter className='sticky bottom-0 bg-background pt-2'>
+        {/* <DialogFooter className='sticky bottom-0 bg-background pt-2'>
           {isEditing ? (
             <>
               <Button
@@ -350,7 +404,7 @@ const VehicleInfoModal = ({
               <Button onClick={() => onConfirm(data)}>Confirm</Button>
             </>
           )}
-        </DialogFooter>
+        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );
