@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -43,10 +42,10 @@ const VehicleInfoModal = ({
         data.model?.name ?? ''
       }`,
       valueType: 'input',
-    }, // 2009 Chevrolet Silverado 1500 XFE
-    { label: 'VIN', value: `${data.vin}`, valueType: 'input' }, // 1GCEC29J09Z152000
-    { label: 'Make', value: `${data.make?.name ?? ''}`, valueType: 'input' }, // Chevrolet
-    { label: 'Model', value: `${data.model?.name ?? ''}`, valueType: 'input' }, // Silverado 1500
+    }, // ok 2009 Chevrolet Silverado 1500 XFE
+    { label: 'VIN', value: `${data.vin}`, valueType: 'input' }, // ok 1GCEC29J09Z152000
+    { label: 'Make', value: `${data.make?.name ?? ''}`, valueType: 'input' }, // ok Chevrolet
+    { label: 'Model', value: `${data.model?.name ?? ''}`, valueType: 'input' }, // ok Silverado 1500
     {
       label: 'Year',
       value: `${data.years?.[0]?.year ?? ''}`,
@@ -185,6 +184,10 @@ const VehicleInfoModal = ({
       valueType: 'input',
     }, // 5200
     {
+      label: 'Fuel Capacity',
+      valueType: 'input',
+    }, // eg. 20 gal or 20 L
+    {
       label: 'Valve Timing',
       value: `${data.engine?.valve?.timing ?? ''}`,
       valueType: 'input',
@@ -269,11 +272,11 @@ const VehicleInfoModal = ({
   const renderFormFields = () => {
     return (
       <div className="space-y-4">
-        {vehicleSpecs.map((spec, index) => (
-          <div key={index} className="flex justify-between items-center">
+        {Object.entries(form.getValues()).map(([key, value]) => (
+          <div key={key} className="flex justify-between items-center">
             <FormField
               control={form.control}
-              name={`${spec.label.toLowerCase().replace(/\s+/g, '')}`}
+              name={key as keyof VinVehicleData}
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel className="font-medium">{spec.label}</FormLabel>
