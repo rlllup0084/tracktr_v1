@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   VinVehicleData,
@@ -255,6 +255,13 @@ const VehicleInfoModal = ({
       // onClose(false)
     }
   };
+
+// If vehicleData changes, reset selected style, body type, and trim
+  useEffect(() => {
+    setSelectedStyle('');
+    setSelectedBodyType('N/A');
+    setSelectedTrim('N/A');
+  }, [data]);
 
   // Store selected style in state
   const [selectedStyle, setSelectedStyle] = useState('');
