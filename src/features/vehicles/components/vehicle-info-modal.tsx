@@ -244,6 +244,23 @@ const VehicleInfoModal = ({
     }
   };
 
+  // Store selected style in state
+  const [selectedStyle, setSelectedStyle] = useState('');
+
+  // Function to update body type and trim when style changes
+  const handleStyleChange = (styleName: string) => {
+    setSelectedStyle(styleName);
+    const selectedStyleData = data.years?.[0]?.styles?.find(
+      style => style.name === styleName
+    );
+    if (selectedStyleData?.submodel?.body) {
+      form.setValue('categories.primaryBodyType', selectedStyleData.submodel.body);
+    }
+    if (selectedStyleData?.trim) {
+      form.setValue('trim', selectedStyleData.trim);
+    }
+  };
+
   /* 
   const SpecList: React.FC<{ specs: SpecItem[] }> = ({ specs }) => (
   <div className="space-y-2">
@@ -308,12 +325,12 @@ const VehicleInfoModal = ({
     return (
       <div className="space-y-4">
         {vehicleSpecs.map((spec, index) => (
-          <div key={index} className="flex justify-between items-center">
+          <div key={index}>
              {
               spec.label === 'Style' ? (
-                <div className="flex justify-between items-center w-full">
+                <div className="flex justify-between items-center">
                   <span className="font-medium">{spec.label}:</span>
-                  <Select defaultValue={spec.value}>
+                  <Select defaultValue={spec.value} onValueChange={handleStyleChange}>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder={spec.value} />
                     </SelectTrigger>
@@ -329,7 +346,7 @@ const VehicleInfoModal = ({
               ) : (
                 <>
                   {spec.label === 'Style' ? (
-                    <div className="flex justify-between items-center w-full">
+                    <div className="flex justify-between items-center">
                       <span className="font-medium">{spec.label}:</span>
                       <Select defaultValue={spec.value}>
                         <SelectTrigger className="w-[200px]">
@@ -347,14 +364,12 @@ const VehicleInfoModal = ({
                   ) : (
                     <div className="flex justify-between items-center">
                       <span className="font-medium">{spec.label}:</span>
-                      <span>{spec.value || 'N/A'}</span>
+                      <span className="text-gray-600">{spec.value || 'N/A'}</span>
                     </div>
                   )}
                 </>
               )
              }
-            <span className="font-medium">{spec.label}:</span>
-            <span className="text-gray-600">{spec.value || 'N/A'}</span>
           </div>
         ))}
       </div>
