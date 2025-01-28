@@ -916,7 +916,7 @@ const VehicleInfoModal = ({
             </DialogTitle>
             <DialogDescription className='text-gray-400'>
               {isEditing
-                ? "Please review and confirm before adding the vehicle to TrackTr."
+                ? 'Please review and confirm before adding the vehicle to TrackTr.'
                 : 'Please review the information one last time before confirming.'}
             </DialogDescription>
           </div>
@@ -953,7 +953,8 @@ const VehicleInfoModal = ({
                   type='submit'
                   className='flex-1 bg-gray-500 hover:bg-gray-600'
                 >
-                  Review
+                  <Check className='w-4 h-4 mr-2' />
+                  Confirm
                 </Button>
               </>
             ) : (
