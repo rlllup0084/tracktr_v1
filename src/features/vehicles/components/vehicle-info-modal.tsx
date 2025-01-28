@@ -17,9 +17,21 @@ import {
 } from '../utils/parseVehicleData';
 import { Check, Edit2, Truck } from 'lucide-react';
 import { SpecItem } from '../interfaces';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
 const VehicleInfoModal = ({
@@ -246,18 +258,21 @@ const VehicleInfoModal = ({
 
   // Store selected style in state
   const [selectedStyle, setSelectedStyle] = useState('');
+  const [selectedBodyType, setSelectedBodyType] = useState('N/A');
+  const [selectedTrim, setSelectedTrim] = useState('N/A');
 
   // Function to update body type and trim when style changes
   const handleStyleChange = (styleName: string) => {
     setSelectedStyle(styleName);
     const selectedStyleData = data.years?.[0]?.styles?.find(
-      style => style.name === styleName
+      (style) => style.name === styleName
     );
+    console.log('Selected style data:', selectedStyleData);
     if (selectedStyleData?.submodel?.body) {
-      form.setValue('categories.primaryBodyType', selectedStyleData.submodel.body);
+      setSelectedBodyType(selectedStyleData.submodel.body);
     }
     if (selectedStyleData?.trim) {
-      form.setValue('trim', selectedStyleData.trim);
+      setSelectedTrim(selectedStyleData.trim);
     }
   };
 
@@ -287,17 +302,20 @@ const VehicleInfoModal = ({
 
   const renderFormFields = () => {
     return (
-      <div className="space-y-4">
+      <div className='space-y-4'>
         {Object.entries(form.getValues()).map(([key, value]) => (
-          <div key={key} className="flex justify-between items-center">
+          <div key={key} className='flex justify-between items-center'>
             <FormField
               control={form.control}
               name={key as keyof VinVehicleData}
               render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="font-medium">{spec.label}</FormLabel>
+                <FormItem className='w-full'>
+                  <FormLabel className='font-medium'>{spec.label}</FormLabel>
                   {spec.valueType === 'selection' ? (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder={spec.value} />
@@ -323,16 +341,18 @@ const VehicleInfoModal = ({
 
   const renderReviewFields = () => {
     return (
-      <div className="space-y-4">
+      <div className='space-y-4'>
         {vehicleSpecs.map((spec, index) => (
           <div key={index}>
-             {
-              spec.label === 'Style' ? (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{spec.label}:</span>
-                  <Select defaultValue={spec.value} onValueChange={handleStyleChange}>
-                    <SelectTrigger className="w-[200px]">
-                      <SelectValue placeholder={spec.value} />
+            {spec.label === 'Style' ? (
+              <>
+                <div className='flex justify-between items-center'>
+                  <span className='font-medium'>{spec.label}:</span>
+                  <Select
+                    onValueChange={handleStyleChange}
+                  >
+                    <SelectTrigger className='w-[300px]'>
+                      <SelectValue placeholder='Select vehicle style' />
                     </SelectTrigger>
                     <SelectContent>
                       {data.years?.[0]?.styles?.map((style, i) => (
@@ -343,33 +363,24 @@ const VehicleInfoModal = ({
                     </SelectContent>
                   </Select>
                 </div>
-              ) : (
-                <>
-                  {spec.label === 'Style' ? (
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{spec.label}:</span>
-                      <Select defaultValue={spec.value}>
-                        <SelectTrigger className="w-[200px]">
-                          <SelectValue placeholder={spec.value} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {data.years?.[0]?.styles?.map((style, i) => (
-                            <SelectItem key={i} value={style.name ?? ''}>
-                              {style.name ?? ''}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ) : (
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{spec.label}:</span>
-                      <span className="text-gray-600">{spec.value || 'N/A'}</span>
-                    </div>
-                  )}
-                </>
+                <div className='flex justify-between items-center mt-4'>
+                  <span className='font-medium'>Body Type:</span>
+                  <span className='text-gray-400'>{selectedBodyType}</span>
+                </div>
+                <div className='flex justify-between items-center mt-4'>
+                  <span className='font-medium'>Trim:</span>
+                  <span className='text-gray-400'>{selectedTrim}</span>
+                </div>
+              </>
+            ) : (
+              // if spec.value is null, do not render the field
+              spec.value && (
+                <div className='flex justify-between items-center'>
+                  <span className='font-medium'>{spec.label}:</span>
+                  <span className='text-gray-400'>{spec.value || 'N/A'}</span>
+                </div>
               )
-             }
+            )}
           </div>
         ))}
       </div>
@@ -405,45 +416,51 @@ const VehicleInfoModal = ({
               </div>
             </ScrollArea>
           </form>
-          <p className="text-sm text-gray-400">
-              {isEditing
-                ? "You can make adjustments if needed, or confirm to proceed."
-                : "Please review the information and confirm if it's correct."}
-            </p>
+          <p className='text-sm text-gray-400'>
+            {isEditing
+              ? 'You can make adjustments if needed, or confirm to proceed.'
+              : "Please review the information and confirm if it's correct."}
+          </p>
 
-            <div className="flex gap-3 pt-4">
-              {isEditing ? (
-                <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 bg-transparent hover:bg-gray-700"
-                    onClick={() => setIsEditing(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" className="flex-1 bg-gray-500 hover:bg-gray-600">
-                    Review
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 bg-transparent hover:bg-gray-700"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Edit2 className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button type="submit" className="flex-1 bg-gray-500 hover:bg-gray-600">
-                    <Check className="w-4 h-4 mr-2" />
-                    Confirm
-                  </Button>
-                </>
-              )}
-            </div>
+          <div className='flex gap-3 pt-4'>
+            {isEditing ? (
+              <>
+                <Button
+                  type='button'
+                  variant='outline'
+                  className='flex-1 bg-transparent hover:bg-gray-700'
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type='submit'
+                  className='flex-1 bg-gray-500 hover:bg-gray-600'
+                >
+                  Review
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type='button'
+                  variant='outline'
+                  className='flex-1 bg-transparent hover:bg-gray-700'
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Edit2 className='w-4 h-4 mr-2' />
+                  Edit
+                </Button>
+                <Button
+                  type='submit'
+                  className='flex-1 bg-gray-500 hover:bg-gray-600'
+                >
+                  <Check className='w-4 h-4 mr-2' />
+                  Confirm
+                </Button>
+              </>
+            )}
+          </div>
         </Form>
         {/* <DialogFooter className='sticky bottom-0 bg-background pt-2'>
           {isEditing ? (
