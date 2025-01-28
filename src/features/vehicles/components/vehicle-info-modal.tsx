@@ -256,7 +256,7 @@ const VehicleInfoModal = ({
     }
   };
 
-// If vehicleData changes, reset selected style, body type, and trim
+  // If vehicleData changes, reset selected style, body type, and trim
   useEffect(() => {
     setSelectedStyle('');
     setSelectedBodyType('N/A');
@@ -283,65 +283,569 @@ const VehicleInfoModal = ({
     }
   };
 
-  /* 
-  const SpecList: React.FC<{ specs: SpecItem[] }> = ({ specs }) => (
-  <div className="space-y-2">
-    {specs.map((spec, index) => (
-      <div key={index} className="flex justify-between">
-        <span className="font-medium">{spec.label}:</span>
-        <span>{spec.value}</span>
-      </div>
-    ))}
-  </div>
-  )
-  */
-
-  const SpecList = ({ specs }: { specs: SpecItem[] }) => (
-    <div className='space-y-2'>
-      {specs.map((spec, index) => (
-        <div key={index} className='flex justify-between'>
-          <span className='font-medium'>{spec.label}:</span>
-          <span>{spec.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-
   const renderFormFields = () => {
     return (
       <div className='space-y-4'>
-        {Object.entries(form.getValues()).map(([key, value]) => (
-          <div key={key} className='flex justify-between items-center'>
-            <FormField
-              control={form.control}
-              name={key as keyof VinVehicleData}
-              render={({ field }) => (
-                <FormItem className='w-full'>
-                  <FormLabel className='font-medium'>{spec.label}</FormLabel>
-                  {spec.valueType === 'selection' ? (
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={spec.value} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={spec.value}>{spec.value}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <FormControl>
-                      <Input {...field} defaultValue={spec.value} />
-                    </FormControl>
-                  )}
-                </FormItem>
-              )}
-            />
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='vehicleName'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Vehicle Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    defaultValue={`${data.years?.[0]?.year ?? ''} ${
+                      data.make?.name ?? ''
+                    } ${data.model?.name ?? ''}`}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='vin'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>VIN</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='make'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Make</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.make?.name ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='model'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Model</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.model?.name ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='years'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Year</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.years?.[0]?.year ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <div className='w-full'>
+            <FormLabel className='text-white'>Style</FormLabel>
+            <Select
+              onValueChange={handleStyleChange}
+              defaultValue={selectedStyle}
+            >
+              <SelectTrigger className='mt-2'>
+                <SelectValue placeholder='Select vehicle style' />
+              </SelectTrigger>
+              <SelectContent>
+                {data.years?.[0]?.styles?.map((style, i) => (
+                  <SelectItem key={i} value={style.name ?? ''}>
+                    {style.name ?? ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        ))}
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='bodyType'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Body Type</FormLabel>
+                <FormControl>
+                  <Input {...field} value={selectedBodyType} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='trim'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Trim</FormLabel>
+                <FormControl>
+                  <Input {...field} value={selectedTrim} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='categories.vehicleType'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Vehicle Type</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.categories?.vehicleType ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='categories.vehicleStyle'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Vehicle Style</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.categories?.vehicleStyle ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='drivenWheels'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Drive Type</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.drivenWheels ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='numOfDoors'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Number of Doors</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.numOfDoors ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='categories.primaryBodyType'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Primary Body Type</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.categories?.primaryBodyType ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='categories.vehicleSize'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Vehicle Size</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.categories?.vehicleSize ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='categories.market'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Market Class</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.categories?.market ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='categories.epaClass'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>EPA Class</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.categories?.epaClass ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.name'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Engine Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={`${data.engine?.name ?? ''} ${
+                      data.engine?.configuration ?? ''
+                    } ${data.engine?.cylinder ?? ''}`}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.type'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Engine Type</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.type ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.horsepower'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Horsepower</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.horsepower ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.torque'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Torque</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.torque ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.cylinder'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Cylinders</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.cylinder ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.displacement'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Displacement</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.displacement ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.fuelType'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Fuel Type</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.fuelType ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.compressionRatio'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Compression Ratio</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.engine?.compressionRatio ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.compressorType'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Compressor Type</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.compressorType ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.configuration'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>
+                  Engine Configuration
+                </FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.configuration ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.code'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Engine Code</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.code ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.rpm.horsepower'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>RPM (Horsepower)</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.engine?.rpm?.horsepower ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.rpm.torque'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>RPM (Torque)</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.rpm?.torque ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.valve.timing'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Valve Timing</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.valve?.timing ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.valve.gear'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Valve Gear</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.valve?.gear ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='engine.totalValves'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Total Valves</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.engine?.totalValves ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='transmission.transmissionType'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Transmission Type</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.transmission?.transmissionType ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='transmission.numberOfSpeeds'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Number of Speeds</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={data.transmission?.numberOfSpeeds ?? ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='transmission.name'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Transmission Name</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.transmission?.name ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='mpg.city'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>City MPG</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.mpg?.city ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex justify-between items-center'>
+          <FormField
+            control={form.control}
+            name='mpg.highway'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='text-white'>Highway MPG</FormLabel>
+                <FormControl>
+                  <Input {...field} value={data.mpg?.highway ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
       </div>
     );
   };
@@ -354,9 +858,10 @@ const VehicleInfoModal = ({
             {spec.label === 'Style' ? (
               <>
                 <div className='flex justify-between items-center'>
-                  <span className='font-medium'>{spec.label}:</span>
+                  <span className='text-white text-sm'>{spec.label}:</span>
                   <Select
                     onValueChange={handleStyleChange}
+                    defaultValue={selectedStyle}
                   >
                     <SelectTrigger className='w-[300px]'>
                       <SelectValue placeholder='Select vehicle style' />
@@ -371,20 +876,24 @@ const VehicleInfoModal = ({
                   </Select>
                 </div>
                 <div className='flex justify-between items-center mt-4'>
-                  <span className='font-medium'>Body Type:</span>
-                  <span className='text-gray-400'>{selectedBodyType}</span>
+                  <span className='text-white text-sm'>Body Type:</span>
+                  <span className='text-gray-400 text-sm'>
+                    {selectedBodyType}
+                  </span>
                 </div>
                 <div className='flex justify-between items-center mt-4'>
-                  <span className='font-medium'>Trim:</span>
-                  <span className='text-gray-400'>{selectedTrim}</span>
+                  <span className='text-white text-sm'>Trim:</span>
+                  <span className='text-gray-400 text-sm'>{selectedTrim}</span>
                 </div>
               </>
             ) : (
               // if spec.value is null, do not render the field
               spec.value && (
                 <div className='flex justify-between items-center'>
-                  <span className='font-medium'>{spec.label}:</span>
-                  <span className='text-gray-400'>{spec.value || 'N/A'}</span>
+                  <span className='text-white text-sm'>{spec.label}:</span>
+                  <span className='text-gray-400 text-sm'>
+                    {spec.value || 'N/A'}
+                  </span>
                 </div>
               )
             )}
@@ -407,7 +916,7 @@ const VehicleInfoModal = ({
             </DialogTitle>
             <DialogDescription className='text-gray-400'>
               {isEditing
-                ? "We've decoded the following information from the VIN. Please review and confirm before adding the vehicle to TrackTr."
+                ? "Please review and confirm before adding the vehicle to TrackTr."
                 : 'Please review the information one last time before confirming.'}
             </DialogDescription>
           </div>
@@ -469,27 +978,6 @@ const VehicleInfoModal = ({
             )}
           </div>
         </Form>
-        {/* <DialogFooter className='sticky bottom-0 bg-background pt-2'>
-          {isEditing ? (
-            <>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </Button>
-              <Button type='submit' onClick={form.handleSubmit(onConfirm)}>
-                Confirm
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button onClick={() => setIsEditing(true)}>Edit</Button>
-              <Button onClick={() => onConfirm(data)}>Confirm</Button>
-            </>
-          )}
-        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );
