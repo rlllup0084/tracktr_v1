@@ -257,7 +257,6 @@ const VehicleInfoModal = ({
   )
   */
 
-  // How to do above in TSX without using React.FC?
   const SpecList = ({ specs }: { specs: SpecItem[] }) => (
     <div className='space-y-2'>
       {specs.map((spec, index) => (
@@ -310,6 +309,50 @@ const VehicleInfoModal = ({
       <div className="space-y-4">
         {vehicleSpecs.map((spec, index) => (
           <div key={index} className="flex justify-between items-center">
+             {
+              spec.label === 'Style' ? (
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-medium">{spec.label}:</span>
+                  <Select defaultValue={spec.value}>
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder={spec.value} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data.years?.[0]?.styles?.map((style, i) => (
+                        <SelectItem key={i} value={style.name ?? ''}>
+                          {style.name ?? ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <>
+                  {spec.label === 'Style' ? (
+                    <div className="flex justify-between items-center w-full">
+                      <span className="font-medium">{spec.label}:</span>
+                      <Select defaultValue={spec.value}>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder={spec.value} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {data.years?.[0]?.styles?.map((style, i) => (
+                            <SelectItem key={i} value={style.name ?? ''}>
+                              {style.name ?? ''}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{spec.label}:</span>
+                      <span>{spec.value || 'N/A'}</span>
+                    </div>
+                  )}
+                </>
+              )
+             }
             <span className="font-medium">{spec.label}:</span>
             <span className="text-gray-600">{spec.value || 'N/A'}</span>
           </div>

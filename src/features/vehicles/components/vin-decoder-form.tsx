@@ -64,8 +64,9 @@ const VinDecoderForm = ({
         const data = await response.json();
         console.log('VIN decoded data:', data);
         const parsedData = parseVehicleData(data);
-        console.log('Parsed vehicle data:', parsedData);
-        setVehicleData(parsedData);
+        const vehicleWithVin = { ...parsedData, vin: values.vin };
+        console.log('Parsed vehicle data:', vehicleWithVin);
+        setVehicleData(vehicleWithVin);
         setIsModalOpen(true);
       }
     } catch (error) {
