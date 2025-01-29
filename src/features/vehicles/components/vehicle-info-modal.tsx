@@ -785,21 +785,21 @@ const VehicleInfoModal = ({
             <div className="flex gap-3 pt-4 mt-4 border-t border-zinc-800">
               {isEditing ? (
                 <>
-                  <Button type="button" variant="outline" className="flex-1" onClick={() => setIsEditing(false)}>
+                  <Button type="button" variant="outline" className="flex-1 bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white transition duration-200" onClick={() => setIsEditing(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" className="flex-1">
+                  <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white transition duration-200">
                     <Check className="w-4 h-4 mr-2" />
                     Save Changes
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button type="button" variant="outline" className="flex-1" onClick={() => setIsEditing(true)}>
+                  <Button type="button" variant="outline" className="flex-1 bg-transparent hover:bg-zinc-800 border border-zinc-700 text-white transition duration-200" onClick={() => setIsEditing(true)}>
                     <Edit2 className="w-4 h-4 mr-2" />
                     Edit
                   </Button>
-                  <Button type="submit" className="flex-1">
+                  <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700 border border-orange-600 text-white transition duration-200">
                     <Check className="w-4 h-4 mr-2" />
                     Confirm
                   </Button>
