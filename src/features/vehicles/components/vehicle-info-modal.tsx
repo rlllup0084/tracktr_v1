@@ -213,6 +213,11 @@ const VehicleInfoModal = ({
     }
   }
 
+  // Make sure everytime model is shown, the isEditing state is reset to false
+  useEffect(() => {
+    setIsEditing(false)
+  }, [isOpen])
+
   useEffect(() => {
     setSelectedStyle(data.years?.[0]?.styles?.[0]?.name ?? "")
     setSelectedBodyType(data.years?.[0]?.styles?.[0]?.submodel?.body ?? "N/A")
