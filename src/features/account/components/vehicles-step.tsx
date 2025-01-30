@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { AccountStepProps } from '../interface';
 import VehicleCountDisplay from '../../vehicles/components/vehicle-count-display';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import VinDecoderForm from '../../vehicles/components/vin-decoder-form';
 import ManualAddVehicleForm from '../../vehicles/components/manual-add-vehicle-form';
 import VehiclesBatchUploadForm from '../../vehicles/components/vehicles-batch-upload-form';
+import { TabsContent, TabsList, TabsRoot, TabsTrigger } from '@/components/custom-tabs';
 
 const VehiclesStep = ({ onSubmit }: AccountStepProps) => {
   const [vehicles, setVehicles] = useState<unknown[]>([]);
@@ -56,7 +57,7 @@ const VehiclesStep = ({ onSubmit }: AccountStepProps) => {
         </div>
         <Card className='mb-8 shadow-lg border-none bg-transparent'>
           <CardContent className='p-0'>
-            <Tabs defaultValue='vin-decoder' className='space-y-4'>
+            <TabsRoot defaultValue='vin-decoder' className='space-y-4'>
               <TabsList className='grid w-full grid-cols-3'>
                 <TabsTrigger value='vin-decoder'>VIN Decoder</TabsTrigger>
                 <TabsTrigger value='manual-add'>Manual Add</TabsTrigger>
@@ -71,7 +72,7 @@ const VehiclesStep = ({ onSubmit }: AccountStepProps) => {
               <TabsContent value="batch-upload">
                 <VehiclesBatchUploadForm onVehiclesUploaded={addVehicles} />
               </TabsContent>
-            </Tabs>
+            </TabsRoot>
           </CardContent>
         </Card>
       </div>

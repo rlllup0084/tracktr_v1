@@ -33,7 +33,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabsContent, TabsList, TabsRoot, TabsTrigger } from '@/components/custom-tabs';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const VehicleInfoModal = ({
   isOpen,
@@ -282,9 +283,9 @@ const VehicleInfoModal = ({
 
   const renderFormFields = () => {
     return (
-      <div className='space-y-4 px-1'>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
-          <TabsList className='grid w-full grid-cols-3 mb-4'>
+      <div className='space-y-4'>
+        <TabsRoot value={activeTab} onValueChange={setActiveTab} className='w-full'>
+          <TabsList className='grid w-full grid-cols-3 mb-4 bg-zinc-800'>
             <TabsTrigger value='general'>General</TabsTrigger>
             <TabsTrigger value='engine'>Engine</TabsTrigger>
             <TabsTrigger value='transmission'>Transmission</TabsTrigger>
@@ -294,13 +295,13 @@ const VehicleInfoModal = ({
           <TabsContent value='transmission'>
             {renderTransmissionFields()}
           </TabsContent>
-        </Tabs>
+        </TabsRoot>
       </div>
     );
   };
 
   const renderGeneralFields = () => (
-    <div className='space-y-4 pb-2'>
+    <div className='space-y-4 pb-2 px-1'>
       <FormField
         control={form.control}
         name='vehicleName'
@@ -513,7 +514,7 @@ const VehicleInfoModal = ({
   );
 
   const renderEngineFields = () => (
-    <div className='space-y-4 pb-2'>
+    <div className='space-y-4 pb-2 px-1'>
       <FormField
         control={form.control}
         name='engine.name'
@@ -715,7 +716,7 @@ const VehicleInfoModal = ({
   );
 
   const renderTransmissionFields = () => (
-    <div className='space-y-4 pb-2'>
+    <div className='space-y-4 pb-2 px-1'>
       <FormField
         control={form.control}
         name='transmission.transmissionType'
@@ -788,8 +789,8 @@ const VehicleInfoModal = ({
   const renderReviewFields = () => {
     return (
       <div className='space-y-4'>
-        <Tabs defaultValue='general' className='w-full'>
-          <TabsList className='grid w-full grid-cols-3 mb-4'>
+        <TabsRoot defaultValue='general' className='w-full'>
+          <TabsList className='grid w-full grid-cols-3 mb-4 bg-zinc-800'>
             <TabsTrigger value='general'>General</TabsTrigger>
             <TabsTrigger value='engine'>Engine</TabsTrigger>
             <TabsTrigger value='transmission'>Transmission</TabsTrigger>
@@ -803,13 +804,13 @@ const VehicleInfoModal = ({
           <TabsContent value='transmission'>
             {renderReviewSection(vehicleSpecs.slice(30))}
           </TabsContent>
-        </Tabs>
+        </TabsRoot>
       </div>
     );
   };
 
   const renderReviewSection = (specs: SpecItem[]) => (
-    <div className='space-y-2'>
+    <div className='space-y-2 px-1'>
       {specs.map((spec, index) => (
         <div
           key={index}
