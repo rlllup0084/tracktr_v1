@@ -40,6 +40,7 @@ export const vinVehicleDataSchema = z.object({
       type: z.string().optional(),
       code: z.string().optional(),
       compressorType: z.string().optional(),
+      manufacturerEngineCode: z.string().optional(),
       rpm: z
         .object({
           horsepower: z.number().optional(),
@@ -67,6 +68,7 @@ export const vinVehicleDataSchema = z.object({
     .optional(),
   drivenWheels: z.string().optional(),
   numOfDoors: z.string().optional(),
+  fuelCapacity: z.number().optional(),
   options: z
     .array(
       z.object({

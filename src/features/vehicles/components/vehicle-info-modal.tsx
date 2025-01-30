@@ -33,7 +33,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { TabsContent, TabsList, TabsRoot, TabsTrigger } from '@/components/custom-tabs';
+import {
+  TabsContent,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
+} from '@/components/custom-tabs';
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const VehicleInfoModal = ({
@@ -121,7 +126,11 @@ const VehicleInfoModal = ({
       label: 'Fuel Capacity',
       valueType: 'input',
     }, // eg. 20 gal or 20 L
-    { label: 'MPG (City)', value: `${data.mpg?.city ?? ''}`, valueType: 'input' }, // 15
+    {
+      label: 'MPG (City)',
+      value: `${data.mpg?.city ?? ''}`,
+      valueType: 'input',
+    }, // 15
     {
       label: 'MPG (Highway)',
       value: `${data.mpg?.highway ?? ''}`,
@@ -284,7 +293,11 @@ const VehicleInfoModal = ({
   const renderFormFields = () => {
     return (
       <div className='space-y-4'>
-        <TabsRoot value={activeTab} onValueChange={setActiveTab} className='w-full'>
+        <TabsRoot
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className='w-full'
+        >
           <TabsList className='grid w-full grid-cols-3 mb-4 bg-zinc-800'>
             <TabsTrigger value='general'>General</TabsTrigger>
             <TabsTrigger value='engine'>Engine</TabsTrigger>
@@ -367,25 +380,33 @@ const VehicleInfoModal = ({
           </FormItem>
         )}
       />
-      <div className='flex justify-between items-center'>
-        <div className='w-full'>
-          <FormLabel className='text-white'>Style</FormLabel>
-          <Select
-            onValueChange={handleStyleChange}
-            defaultValue={selectedStyle}
-          >
-            <SelectTrigger className='mt-2'>
-              <SelectValue placeholder='Select vehicle style' />
-            </SelectTrigger>
-            <SelectContent>
-              {data.years?.[0]?.styles?.map((style, i) => (
-                <SelectItem key={i} value={style.name ?? ''}>
-                  {style.name ?? ''}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <FormField
+        control={form.control}
+        name='numOfDoors'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>Number of Doors</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.numOfDoors ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      {/* TODO: Fix this, messes witht the ScrollArea */}
+      <div className='space-y-2 w-full'>
+        <FormLabel className='text-white'>Style</FormLabel>
+        <Select onValueChange={handleStyleChange} defaultValue={selectedStyle}>
+          <SelectTrigger className='mt-2'>
+            <SelectValue placeholder='Select vehicle style' />
+          </SelectTrigger>
+          <SelectContent>
+            {data.years?.[0]?.styles?.map((style, i) => (
+              <SelectItem key={i} value={style.name ?? ''}>
+                {style.name ?? ''}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <FormField
         control={form.control}
@@ -437,30 +458,6 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
-        name='drivenWheels'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>Drive Type</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.drivenWheels ?? ''} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='numOfDoors'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>Number of Doors</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.numOfDoors ?? ''} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
         name='categories.primaryBodyType'
         render={({ field }) => (
           <FormItem className='w-full'>
@@ -470,18 +467,6 @@ const VehicleInfoModal = ({
                 {...field}
                 value={data.categories?.primaryBodyType ?? ''}
               />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='categories.vehicleSize'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>Vehicle Size</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.categories?.vehicleSize ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -500,12 +485,60 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
+        name='categories.vehicleSize'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>Vehicle Size</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.categories?.vehicleSize ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name='categories.epaClass'
         render={({ field }) => (
           <FormItem className='w-full'>
             <FormLabel className='text-white'>EPA Class</FormLabel>
             <FormControl>
               <Input {...field} value={data.categories?.epaClass ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name='fuelCapacity'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>EPA Class</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.fuelCapacity ?? 'N/A'} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name='mpg.city'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>MPG (City)</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.mpg?.city ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name='mpg.highway'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>MPG (Highway)</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.mpg?.highway ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -526,7 +559,7 @@ const VehicleInfoModal = ({
                 {...field}
                 value={`${data.engine?.name ?? ''} ${
                   data.engine?.configuration ?? ''
-                } ${data.engine?.cylinder ?? ''}`}
+                }${data.engine?.cylinder ?? ''}`}
               />
             </FormControl>
           </FormItem>
@@ -546,12 +579,36 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
+        name='engine.displacement'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>Displacement</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.engine?.displacement ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name='engine.horsepower'
         render={({ field }) => (
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Horsepower</FormLabel>
             <FormControl>
               <Input {...field} value={data.engine?.horsepower ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name='engine.rpm.horsepower'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>RPM (Horsepower)</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.engine?.rpm?.horsepower ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -570,24 +627,12 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
-        name='engine.cylinder'
+        name='engine.rpm.torque'
         render={({ field }) => (
           <FormItem className='w-full'>
-            <FormLabel className='text-white'>Cylinders</FormLabel>
+            <FormLabel className='text-white'>RPM (Torque)</FormLabel>
             <FormControl>
-              <Input {...field} value={data.engine?.cylinder ?? ''} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='engine.displacement'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>Displacement</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.engine?.displacement ?? ''} />
+              <Input {...field} value={data.engine?.rpm?.torque ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -618,12 +663,24 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
-        name='engine.compressorType'
+        name='engine.cylinder'
         render={({ field }) => (
           <FormItem className='w-full'>
-            <FormLabel className='text-white'>Compressor Type</FormLabel>
+            <FormLabel className='text-white'>Cylinders</FormLabel>
             <FormControl>
-              <Input {...field} value={data.engine?.compressorType ?? ''} />
+              <Input {...field} value={data.engine?.cylinder ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name='engine.totalValves'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>Total Valves</FormLabel>
+            <FormControl>
+              <Input {...field} value={data.engine?.totalValves ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -642,36 +699,12 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
-        name='engine.code'
+        name='engine.compressorType'
         render={({ field }) => (
           <FormItem className='w-full'>
-            <FormLabel className='text-white'>Engine Code</FormLabel>
+            <FormLabel className='text-white'>Compressor Type</FormLabel>
             <FormControl>
-              <Input {...field} value={data.engine?.code ?? ''} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='engine.rpm.horsepower'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>RPM (Horsepower)</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.engine?.rpm?.horsepower ?? ''} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='engine.rpm.torque'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>RPM (Torque)</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.engine?.rpm?.torque ?? ''} />
+              <Input {...field} value={data.engine?.compressorType ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -702,12 +735,29 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
-        name='engine.totalValves'
+        name='engine.code'
         render={({ field }) => (
           <FormItem className='w-full'>
-            <FormLabel className='text-white'>Total Valves</FormLabel>
+            <FormLabel className='text-white'>Engine Code</FormLabel>
             <FormControl>
-              <Input {...field} value={data.engine?.totalValves ?? ''} />
+              <Input {...field} value={data.engine?.code ?? ''} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name='engine.manufacturerEngineCode'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>
+              Manufacturer Engine Code
+            </FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={data.engine?.manufacturerEngineCode ?? 'N/A'}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -719,15 +769,12 @@ const VehicleInfoModal = ({
     <div className='space-y-4 pb-2 px-1'>
       <FormField
         control={form.control}
-        name='transmission.transmissionType'
+        name='transmission.name'
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Transmission Type</FormLabel>
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>Transmission Name</FormLabel>
             <FormControl>
-              <Input
-                {...field}
-                value={data.transmission?.transmissionType ?? ''}
-              />
+              <Input {...field} value={data.transmission?.name ?? ''} />
             </FormControl>
           </FormItem>
         )}
@@ -749,36 +796,27 @@ const VehicleInfoModal = ({
       />
       <FormField
         control={form.control}
-        name='transmission.name'
+        name='transmission.transmissionType'
         render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>Transmission Name</FormLabel>
+          <FormItem>
+            <FormLabel>Transmission Type</FormLabel>
             <FormControl>
-              <Input {...field} value={data.transmission?.name ?? ''} />
+              <Input
+                {...field}
+                value={data.transmission?.transmissionType ?? ''}
+              />
             </FormControl>
           </FormItem>
         )}
       />
       <FormField
         control={form.control}
-        name='mpg.city'
+        name='drivenWheels'
         render={({ field }) => (
           <FormItem className='w-full'>
-            <FormLabel className='text-white'>City MPG</FormLabel>
+            <FormLabel className='text-white'>Drivetrain</FormLabel>
             <FormControl>
-              <Input {...field} value={data.mpg?.city ?? ''} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='mpg.highway'
-        render={({ field }) => (
-          <FormItem className='w-full'>
-            <FormLabel className='text-white'>Highway MPG</FormLabel>
-            <FormControl>
-              <Input {...field} value={data.mpg?.highway ?? ''} />
+              <Input {...field} value={data.drivenWheels ?? ''} />
             </FormControl>
           </FormItem>
         )}
