@@ -67,6 +67,11 @@ const VehicleInfoModal = ({
       valueType: 'input',
     }, // 2009
     {
+      label: 'Number of Doors',
+      value: `${data.numOfDoors ?? ''}`,
+      valueType: 'input',
+    }, // 4
+    {
       label: 'Style',
       value: `${data.years?.[0]?.styles?.[0]?.name ?? ''}`,
       valueType: 'selection',
@@ -93,35 +98,35 @@ const VehicleInfoModal = ({
       valueType: 'input',
     }, // Crew Cab Pickup
     {
-      label: 'Drive Type',
-      value: `${data.drivenWheels ?? ''}`,
-      valueType: 'input',
-    }, // Rear-wheel drive (RWD)
-    {
-      label: 'Number of Doors',
-      value: `${data.numOfDoors ?? ''}`,
-      valueType: 'input',
-    }, // 4
-    {
       label: 'Primary Body Type',
       value: `${data.categories?.primaryBodyType ?? ''}`,
       valueType: 'input',
     }, // Truck
-    {
-      label: 'Vehicle Size',
-      value: `${data.categories?.vehicleSize ?? ''}`,
-      valueType: 'input',
-    }, // Large
     {
       label: 'Market Class',
       value: `${data.categories?.market ?? ''}`,
       valueType: 'input',
     }, // Flex Fuel
     {
+      label: 'Vehicle Size',
+      value: `${data.categories?.vehicleSize ?? ''}`,
+      valueType: 'input',
+    }, // Large
+    {
       label: 'EPA Class',
       value: `${data.categories?.epaClass ?? ''}`,
       valueType: 'input',
     }, // Standard Pickup Trucks
+    {
+      label: 'Fuel Capacity',
+      valueType: 'input',
+    }, // eg. 20 gal or 20 L
+    { label: 'MPG (City)', value: `${data.mpg?.city ?? ''}`, valueType: 'input' }, // 15
+    {
+      label: 'MPG (Highway)',
+      value: `${data.mpg?.highway ?? ''}`,
+      valueType: 'input',
+    }, // 21
     // --------------------------------------------------------
     {
       label: 'Engine Name',
@@ -136,25 +141,30 @@ const VehicleInfoModal = ({
       valueType: 'input',
     }, // Flex-fuel (unleaded/E85)
     {
+      label: 'Displacement',
+      value: `${data.engine?.displacement ?? ''}`,
+      valueType: 'input',
+    }, // 5.3L (5328 cc)
+    {
       label: 'Horsepower',
       value: `${data.engine?.horsepower ?? ''}`,
       valueType: 'input',
     }, // 315 hp @ 5200 rpm
+    {
+      label: 'RPM (Horsepower)',
+      value: `${data.engine?.rpm?.horsepower ?? ''}`,
+      valueType: 'input',
+    }, // 5200
     {
       label: 'Torque',
       value: `${data.engine?.torque ?? ''}`,
       valueType: 'input',
     }, // 338 lb-ft @ 4400 rpm
     {
-      label: 'Cylinders',
-      value: `${data.engine?.cylinder ?? ''}`,
+      label: 'RPM (Torque)',
+      value: `${data.engine?.rpm?.torque ?? ''}`,
       valueType: 'input',
-    }, // 8
-    {
-      label: 'Displacement',
-      value: `${data.engine?.displacement ?? ''}`,
-      valueType: 'input',
-    }, // 5.3L (5328 cc)
+    }, // 5200
     {
       label: 'Fuel Type',
       value: `${data.engine?.fuelType ?? ''}`,
@@ -166,36 +176,25 @@ const VehicleInfoModal = ({
       valueType: 'input',
     }, // 9.9
     {
-      label: 'Compressor Type',
-      value: `${data.engine?.compressorType ?? ''}`,
+      label: 'Cylinders',
+      value: `${data.engine?.cylinder ?? ''}`,
       valueType: 'input',
-    }, // Compressor Type
+    }, // 8
+    {
+      label: 'Total Valves',
+      value: `${data.engine?.totalValves ?? ''}`,
+      valueType: 'input',
+    }, // 16
     {
       label: 'Engine Configuration',
       value: `${data.engine?.configuration ?? ''}`,
       valueType: 'input',
     }, // V8
     {
-      label: 'Engine Code',
-      value: `${data.engine?.code ?? ''}`,
+      label: 'Compressor Type',
+      value: `${data.engine?.compressorType ?? ''}`,
       valueType: 'input',
-    }, // 8VNAF5.3
-    { label: 'Manufacturer Engine Code', valueType: 'input' }, // Engine Manufacturer
-    { label: 'Fuel Capacity', valueType: 'input' }, // Fuel Capacity
-    {
-      label: 'RPM (Horsepower)',
-      value: `${data.engine?.rpm?.horsepower ?? ''}`,
-      valueType: 'input',
-    }, // 5200
-    {
-      label: 'RPM (Torque)',
-      value: `${data.engine?.rpm?.torque ?? ''}`,
-      valueType: 'input',
-    }, // 5200
-    {
-      label: 'Fuel Capacity',
-      valueType: 'input',
-    }, // eg. 20 gal or 20 L
+    }, // Compressor Type
     {
       label: 'Valve Timing',
       value: `${data.engine?.valve?.timing ?? ''}`,
@@ -207,31 +206,32 @@ const VehicleInfoModal = ({
       valueType: 'input',
     }, // Overhead valve
     {
-      label: 'Total Valves',
-      value: `${data.engine?.totalValves ?? ''}`,
+      label: 'Engine Code',
+      value: `${data.engine?.code ?? ''}`,
       valueType: 'input',
-    }, // 16
+    }, // 8VNAF5.3
+    { label: 'Manufacturer Engine Code', valueType: 'input' }, // Engine Manufacturer
+    // { label: 'Fuel Capacity', valueType: 'input' }, // Fuel Capacity redudant
     {
-      label: 'Transmission Type',
-      value: `${data.transmission?.transmissionType ?? ''}`,
+      label: 'Transmission Name',
+      value: `${data.transmission?.name ?? ''}`,
       valueType: 'input',
-    }, // Automatic
+    }, // Transmission Name
     {
       label: 'Number of Speeds',
       value: `${data.transmission?.numberOfSpeeds ?? ''}`,
       valueType: 'input',
     }, // 6
     {
-      label: 'Transmission Name',
-      value: `${data.transmission?.name ?? ''}`,
+      label: 'Transmission Type',
+      value: `${data.transmission?.transmissionType ?? ''}`,
       valueType: 'input',
-    }, // Transmission Name
-    { label: 'City MPG', value: `${data.mpg?.city ?? ''}`, valueType: 'input' }, // 15
+    }, // Automatic
     {
-      label: 'Highway MPG',
-      value: `${data.mpg?.highway ?? ''}`,
+      label: 'Drivetrain',
+      value: `${data.drivenWheels ?? ''}`,
       valueType: 'input',
-    }, // 21
+    }, // Rear-wheel drive (RWD)
   ];
 
   const form = useForm<VinVehicleData>({
@@ -796,13 +796,13 @@ const VehicleInfoModal = ({
             <TabsTrigger value='transmission'>Transmission</TabsTrigger>
           </TabsList>
           <TabsContent value='general'>
-            {renderReviewSection(vehicleSpecs.slice(0, 15))}
+            {renderReviewSection(vehicleSpecs.slice(0, 18))}
           </TabsContent>
           <TabsContent value='engine'>
-            {renderReviewSection(vehicleSpecs.slice(15, 30))}
+            {renderReviewSection(vehicleSpecs.slice(18, 35))}
           </TabsContent>
           <TabsContent value='transmission'>
-            {renderReviewSection(vehicleSpecs.slice(30))}
+            {renderReviewSection(vehicleSpecs.slice(35))}
           </TabsContent>
         </TabsRoot>
       </div>
