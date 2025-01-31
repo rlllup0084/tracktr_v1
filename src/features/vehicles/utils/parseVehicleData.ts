@@ -20,8 +20,10 @@ export const vinVehicleDataSchema = z.object({
       niceName: z.string().optional(),
     })
     .optional(),
+  year: z.number().int().min(1900).optional(),
   bodyType: z.string().optional(),
   trim: z.string().optional(),
+  engineName: z.string().max(100).optional(),
   engine: z
     .object({
       id: z.string().optional(),
