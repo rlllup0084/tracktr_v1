@@ -392,22 +392,35 @@ const VehicleInfoModal = ({
           </FormItem>
         )}
       />
-      {/* TODO: Fix this, messes witht the ScrollArea */}
-      <div className='space-y-2 w-full'>
-        <FormLabel className='text-white'>Style</FormLabel>
-        <Select onValueChange={handleStyleChange} defaultValue={selectedStyle}>
-          <SelectTrigger className='mt-2'>
-            <SelectValue placeholder='Select vehicle style' />
-          </SelectTrigger>
-          <SelectContent>
-            {data.years?.[0]?.styles?.map((style, i) => (
-              <SelectItem key={i} value={style.name ?? ''}>
-                {style.name ?? ''}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <FormField
+        control={form.control}
+        name='styleId'
+        render={({ field }) => (
+          <FormItem className='w-full'>
+            <FormLabel className='text-white'>Style</FormLabel>
+            <Select
+              onValueChange={(value) => {
+                field.onChange(value);
+                handleStyleChange(value);
+              }}
+              defaultValue={selectedStyle}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder='Select vehicle style' />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {data.years?.[0]?.styles?.map((style, i) => (
+                  <SelectItem key={i} value={style.name ?? ''}>
+                    {style.name ?? ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormItem>
+        )}
+      />
       <FormField
         control={form.control}
         name='bodyType'
@@ -865,7 +878,7 @@ const VehicleInfoModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[600px] h-[90vh] flex flex-col'>
+      <DialogContent className='sm:max-w-[600px] h-[90vh] flex flex-col overflow-hidden'>
         <DialogHeader className='flex-row items-center gap-3'>
           <div className='rounded-full bg-zinc-800 p-2'>
             <Truck className='h-6 w-6 text-white' />
@@ -884,9 +897,9 @@ const VehicleInfoModal = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='flex-1 overflow-hidden flex flex-col'
+            className='flex-1 flex overflow-hidden flex-col'
           >
-            <ScrollArea className='flex-1 overflow-auto pr-2'>
+            <ScrollArea className='flex-1 [&>div>div]:!block pr-2' type='hover'>
               {isEditing ? renderFormFields() : renderReviewFields()}
             </ScrollArea>
             <div className='flex gap-3 pt-4 mt-4 mb-1 border-t border-zinc-800'>

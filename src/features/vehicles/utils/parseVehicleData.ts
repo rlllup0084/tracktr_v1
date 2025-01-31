@@ -123,6 +123,7 @@ export const vinVehicleDataSchema = z.object({
     })
     .optional(),
   squishVin: z.string().optional(),
+  styleId: z.string().optional(),
   years: z
     .array(
       z.object({
