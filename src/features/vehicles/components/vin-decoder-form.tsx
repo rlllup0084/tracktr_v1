@@ -17,8 +17,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import VehicleInfoModal from './vehicle-info-modal';
 import { useGetAccount } from '@/features/account/api/use-get-account';
-import { parse } from 'path';
-import { parseVehicleData } from '../utils/parseVehicleData';
+import { parseVehicleData, type VinVehicleData } from '../utils/parseVehicleData';
 
 const formSchema = z.object({
   vin: z
@@ -31,7 +30,7 @@ const VinDecoderForm = ({
 }: {
   onVehicleConfirmed: (vehicle: unknown) => void;
 }) => {
-  const [vehicleData, setVehicleData] = useState<any>(null);
+  const [vehicleData, setVehicleData] = useState<VinVehicleData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -104,7 +103,7 @@ const VinDecoderForm = ({
           />
           <Button
             type='submit'
-            disabled={isLoading}
+            disabled={isLoading && isLoadingAccount}
             className='w-full h-12 px-6 py-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white text-md font-semibold rounded-md transition duration-200'
           >
             {isLoading ? 'Decoding...' : 'Decode VIN'}
