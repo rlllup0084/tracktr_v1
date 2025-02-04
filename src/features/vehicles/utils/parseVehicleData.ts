@@ -13,6 +13,7 @@ export const vinVehicleDataSchema = z.object({
       niceName: z.string().optional(),
     })
     .optional(),
+  maker: z.string().optional(),
   model: z
     .object({
       id: z.string().optional(),
@@ -20,9 +21,16 @@ export const vinVehicleDataSchema = z.object({
       niceName: z.string().optional(),
     })
     .optional(),
+  vehicleModel: z.string().optional(),
   year: z.number().int().min(1900).optional(),
   bodyType: z.string().optional(),
   trim: z.string().optional(),
+  vehicleType: z.string().optional(),
+  vehicleStyle: z.string().optional(),
+  primaryBodyType: z.string().optional(),
+  market: z.string().optional(),
+  vehicleSize: z.string().optional(),
+  epaClass: z.string().optional(),
   engineName: z.string().max(100).optional(),
   engine: z
     .object({
@@ -157,6 +165,8 @@ export const vinVehicleDataSchema = z.object({
       city: z.string().optional(),
     })
     .optional(),
+    mpgCity: z.string().optional(),
+    mpgHighway: z.string().optional(),
 });
 
 export type VinVehicleData = z.infer<typeof vinVehicleDataSchema>;

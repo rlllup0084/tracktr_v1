@@ -274,24 +274,24 @@ const VehicleInfoModal = ({
           }
         };
 
-        updateSpecValue('Vehicle Name', data.vehicleName);
-        updateSpecValue('VIN', data.vin);
-        updateSpecValue('Make', data.make?.name);
-        updateSpecValue('Model', data.model?.name);
-        updateSpecValue('Year', data.year?.toString());
-        updateSpecValue('Number of Doors', data.numOfDoors);
-        updateSpecValue('Style', data.styleId);
-        updateSpecValue('Body Type', data.bodyType);
-        updateSpecValue('Trim', data.trim);
-        updateSpecValue('Vehicle Type', data.categories?.vehicleType);
-        updateSpecValue('Vehicle Style', data.categories?.vehicleStyle);
-        updateSpecValue('Primary Body Type', data.categories?.primaryBodyType);
-        updateSpecValue('Market Class', data.categories?.market);
-        updateSpecValue('Vehicle Size', data.categories?.vehicleSize);
-        updateSpecValue('EPA Class', data.categories?.epaClass);
-        updateSpecValue('Fuel Capacity', data.fuelCapacity?.toString());
-        updateSpecValue('MPG (City)', data.mpg?.city?.toString());
-        updateSpecValue('MPG (Highway)', data.mpg?.highway?.toString());
+        updateSpecValue('Vehicle Name', data.vehicleName); // vehicleName
+        updateSpecValue('VIN', data.vin); // vin
+        updateSpecValue('Make', data.make?.name); // maker
+        updateSpecValue('Model', data.model?.name); // vehicleModel
+        updateSpecValue('Year', data.year?.toString()); // year
+        updateSpecValue('Number of Doors', data.numOfDoors); // numOfDoors
+        updateSpecValue('Style', data.styleId); // styleId
+        updateSpecValue('Body Type', data.bodyType); // bodyType
+        updateSpecValue('Trim', data.trim); // trim
+        updateSpecValue('Vehicle Type', data.categories?.vehicleType); // vehicleType
+        updateSpecValue('Vehicle Style', data.categories?.vehicleStyle); // vehicleStyle
+        updateSpecValue('Primary Body Type', data.categories?.primaryBodyType); // primaryBodyType
+        updateSpecValue('Market Class', data.categories?.market); // market
+        updateSpecValue('Vehicle Size', data.categories?.vehicleSize); // vehicleSize
+        updateSpecValue('EPA Class', data.categories?.epaClass); // epaClass
+        updateSpecValue('Fuel Capacity', data.fuelCapacity?.toString()); // fuelCapacity
+        updateSpecValue('MPG (City)', data.mpg?.city?.toString()); // mpgCity
+        updateSpecValue('MPG (Highway)', data.mpg?.highway?.toString()); //mpgHighway
         
         // Engine specs
         updateSpecValue('Engine Name', data.engineName);
