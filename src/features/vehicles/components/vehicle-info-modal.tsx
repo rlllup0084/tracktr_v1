@@ -264,10 +264,59 @@ const VehicleInfoModal = ({
       // iterate vehicleSpecs values and compare with data
       // if different, set the new value
       // if same, keep the old value
-      vehicleSpecs.forEach((spec) => {
-        if (spec.label === 'Vehicle Name' && data.vehicleName && spec.value !== data.vehicleName) {
-          spec.value = data.vehicleName;
-        }
+      vehicleSpecs.forEach(() => {
+        // iterate through the data object and update the spec value if it's different
+        const updateSpecValue = (specLabel: string, newValue: string | undefined) => {
+          if (!newValue) return;
+          const spec = vehicleSpecs.find(s => s.label === specLabel);
+          if (spec && spec.value !== newValue) {
+            spec.value = newValue;
+          }
+        };
+
+        updateSpecValue('Vehicle Name', data.vehicleName);
+        updateSpecValue('VIN', data.vin);
+        updateSpecValue('Make', data.make?.name);
+        updateSpecValue('Model', data.model?.name);
+        updateSpecValue('Year', data.year?.toString());
+        updateSpecValue('Number of Doors', data.numOfDoors);
+        updateSpecValue('Style', data.styleId);
+        updateSpecValue('Body Type', data.bodyType);
+        updateSpecValue('Trim', data.trim);
+        updateSpecValue('Vehicle Type', data.categories?.vehicleType);
+        updateSpecValue('Vehicle Style', data.categories?.vehicleStyle);
+        updateSpecValue('Primary Body Type', data.categories?.primaryBodyType);
+        updateSpecValue('Market Class', data.categories?.market);
+        updateSpecValue('Vehicle Size', data.categories?.vehicleSize);
+        updateSpecValue('EPA Class', data.categories?.epaClass);
+        updateSpecValue('Fuel Capacity', data.fuelCapacity?.toString());
+        updateSpecValue('MPG (City)', data.mpg?.city?.toString());
+        updateSpecValue('MPG (Highway)', data.mpg?.highway?.toString());
+        
+        // Engine specs
+        updateSpecValue('Engine Name', data.engineName);
+        updateSpecValue('Engine Type', data.engine?.type);
+        updateSpecValue('Displacement', data.engine?.displacement?.toString());
+        updateSpecValue('Horsepower', data.engine?.horsepower?.toString());
+        updateSpecValue('RPM (Horsepower)', data.engine?.rpm?.horsepower?.toString());
+        updateSpecValue('Torque', data.engine?.torque?.toString());
+        updateSpecValue('RPM (Torque)', data.engine?.rpm?.torque?.toString());
+        updateSpecValue('Fuel Type', data.engine?.fuelType);
+        updateSpecValue('Compression Ratio', data.engine?.compressionRatio?.toString());
+        updateSpecValue('Cylinders', data.engine?.cylinder?.toString());
+        updateSpecValue('Total Valves', data.engine?.totalValves?.toString());
+        updateSpecValue('Engine Configuration', data.engine?.configuration);
+        updateSpecValue('Compressor Type', data.engine?.compressorType);
+        updateSpecValue('Valve Timing', data.engine?.valve?.timing);
+        updateSpecValue('Valve Gear', data.engine?.valve?.gear);
+        updateSpecValue('Engine Code', data.engine?.code);
+        updateSpecValue('Manufacturer Engine Code', data.engine?.manufacturerEngineCode);
+
+        // Transmission specs
+        updateSpecValue('Transmission Name', data.transmission?.name);
+        updateSpecValue('Number of Speeds', data.transmission?.numberOfSpeeds?.toString());
+        updateSpecValue('Transmission Type', data.transmission?.transmissionType);
+        updateSpecValue('Drivetrain', data.drivenWheels);
       });
       //  refresh renderReviewSection
       setVehicleSpecs([...vehicleSpecs]);

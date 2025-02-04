@@ -17,7 +17,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import VehicleInfoModal from './vehicle-info-modal';
 import { useGetAccount } from '@/features/account/api/use-get-account';
-import { parseVehicleData, type VinVehicleData } from '../utils/parseVehicleData';
+import {
+  parseVehicleData,
+  type VinVehicleData,
+} from '../utils/parseVehicleData';
 
 const formSchema = z.object({
   vin: z
@@ -45,19 +48,33 @@ const VinDecoderForm = ({
     },
   });
 
+  // TODO: If new vehicle is confirmed, show new vehicle modal to continue processing the new vehicle
+  const handleVehicleConfirmed = (vehicle: unknown) => {
+    if (vehicle) {
+      console.log('Vehicle confirmed:', vehicle);
+      onVehicleConfirmed(vehicle);
+      setVehicleData(null);
+      form.reset();
+    }
+  };
+
   // create a useEffect hook to set the vinDecoderKey
   useEffect(() => {
-    const account = Array.isArray(accountValues) ? accountValues[0] : accountValues;
+    const account = Array.isArray(accountValues)
+      ? accountValues[0]
+      : accountValues;
     setVinDecoderKey(account?.vin_decoder_key ?? null);
   }, [accountValues]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const account = Array.isArray(accountValues) ? accountValues[0] : accountValues;
+    const account = Array.isArray(accountValues)
+      ? accountValues[0]
+      : accountValues;
     if (!account?.vin_decoder_key) {
       console.error('VIN decoder key is not available');
       return;
     }
-    
+
     setIsLoading(true);
     try {
       // const response = await fetch(`/api/decode-vin?vin=${values.vin}`);
@@ -118,7 +135,7 @@ const VinDecoderForm = ({
           </Button>
         </form>
       </Form>
-      {vehicleData && (
+      {/* {vehicleData && (
         <VehicleInfoModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -127,6 +144,14 @@ const VinDecoderForm = ({
             onVehicleConfirmed(confirmedData);
             setIsModalOpen(false);
           }}
+        />
+      )} */}
+      {vehicleData && (
+        <VehicleInfoModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          data={vehicleData}
+          onConfirm={handleVehicleConfirmed}
         />
       )}
     </div>
