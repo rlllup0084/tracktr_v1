@@ -78,20 +78,29 @@ const VehicleInfoModal = ({
     }, // 4
     {
       label: 'Style',
-      value: `${data.years?.[0]?.styles?.[0]?.name ?? ''}`,
+      value: data.styleId
+        ? data.years?.[0]?.styles?.find((style) => style.name === data.styleId)
+            ?.name
+        : data.years?.[0]?.styles?.[0]?.name ?? '',
       valueType: 'selection',
-    }, // XFE
+      // XFE
+    },
     {
       label: 'Body Type',
-      value: `${data.years?.[0]?.styles?.[0]?.submodel?.body ?? ''}`,
+      value: data.styleId
+        ? data.years?.[0]?.styles?.find((style) => style.name === data.styleId)
+            ?.submodel?.body
+        : data.years?.[0]?.styles?.[0]?.submodel?.body ?? '',
       valueType: 'input',
-    }, // Crew Cab
+    }, // Crew Cab Pickup
     {
       label: 'Trim',
-      value: `${data.years?.[0]?.styles?.[0]?.trim ?? ''}`,
+      value: data.styleId
+        ? data.years?.[0]?.styles?.find((style) => style.name === data.styleId)
+            ?.trim
+        : data.years?.[0]?.styles?.[0]?.trim ?? '',
       valueType: 'input',
-    }, // XFE
-
+    },
     {
       label: 'Vehicle Type',
       value: `${data.categories?.vehicleType ?? ''}`,
@@ -441,7 +450,7 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Body Type</FormLabel>
             <FormControl>
-              <Input {...field} value={selectedBodyType} />
+              <Input {...field} value={field.value || selectedBodyType} />
             </FormControl>
           </FormItem>
         )}
@@ -453,7 +462,7 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Trim</FormLabel>
             <FormControl>
-              <Input {...field} value={selectedTrim} />
+              <Input {...field} value={field.value || selectedTrim} />
             </FormControl>
           </FormItem>
         )}
@@ -609,9 +618,12 @@ const VehicleInfoModal = ({
             <FormControl>
               <Input
                 {...field}
-                value={field.value || `${data.engine?.name ?? ''} ${
-                  data.engine?.configuration ?? ''
-                }${data.engine?.cylinder ?? ''}`}
+                value={
+                  field.value ||
+                  `${data.engine?.name ?? ''} ${
+                    data.engine?.configuration ?? ''
+                  }${data.engine?.cylinder ?? ''}`
+                }
               />
             </FormControl>
           </FormItem>
@@ -624,7 +636,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Engine Type</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.type ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.type ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -636,7 +651,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Displacement</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.displacement ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.displacement ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -648,7 +666,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Horsepower</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.horsepower ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.horsepower ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -660,7 +681,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>RPM (Horsepower)</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.rpm?.horsepower ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.rpm?.horsepower ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -672,7 +696,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Torque</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.torque ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.torque ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -684,7 +711,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>RPM (Torque)</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.rpm?.torque ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.rpm?.torque ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -696,7 +726,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Fuel Type</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.fuelType ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.fuelType ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -708,7 +741,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Compression Ratio</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.compressionRatio ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.compressionRatio ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -720,7 +756,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Cylinders</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.cylinder ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.cylinder ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -732,7 +771,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Total Valves</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.totalValves ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.totalValves ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -744,7 +786,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Engine Configuration</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.configuration ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.configuration ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -756,7 +801,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Compressor Type</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.compressorType ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.compressorType ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -768,7 +816,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Valve Timing</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.valve?.timing ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.valve?.timing ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -780,7 +831,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Valve Gear</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.valve?.gear ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.valve?.gear ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -792,7 +846,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Engine Code</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.engine?.code ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.engine?.code ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -808,7 +865,10 @@ const VehicleInfoModal = ({
             <FormControl>
               <Input
                 {...field}
-                value={field.value || `${data.engine?.manufacturerEngineCode ?? 'N/A'}`}
+                value={
+                  field.value ||
+                  `${data.engine?.manufacturerEngineCode ?? 'N/A'}`
+                }
               />
             </FormControl>
           </FormItem>
@@ -826,7 +886,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Transmission Name</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.transmission?.name ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.transmission?.name ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}
@@ -840,7 +903,9 @@ const VehicleInfoModal = ({
             <FormControl>
               <Input
                 {...field}
-                value={field.value || `${data.transmission?.numberOfSpeeds ?? ''}`}
+                value={
+                  field.value || `${data.transmission?.numberOfSpeeds ?? ''}`
+                }
               />
             </FormControl>
           </FormItem>
@@ -855,7 +920,9 @@ const VehicleInfoModal = ({
             <FormControl>
               <Input
                 {...field}
-                value={field.value || `${data.transmission?.transmissionType ?? ''}`}
+                value={
+                  field.value || `${data.transmission?.transmissionType ?? ''}`
+                }
               />
             </FormControl>
           </FormItem>
@@ -868,7 +935,10 @@ const VehicleInfoModal = ({
           <FormItem className='w-full'>
             <FormLabel className='text-white'>Drivetrain</FormLabel>
             <FormControl>
-              <Input {...field} value={field.value || `${data.drivenWheels ?? ''}`} />
+              <Input
+                {...field}
+                value={field.value || `${data.drivenWheels ?? ''}`}
+              />
             </FormControl>
           </FormItem>
         )}

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import VehicleInfoModal from './vehicle-info-modal';
@@ -33,6 +33,8 @@ const VinDecoderForm = ({
   const [vehicleData, setVehicleData] = useState<VinVehicleData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // create a useState hook to store the vinDecoderKey
+  const [vinDecoderKey, setVinDecoderKey] = useState<string | null>(null);
 
   const { data: accountValues, isLoading: isLoadingAccount } = useGetAccount();
 
@@ -42,6 +44,12 @@ const VinDecoderForm = ({
       vin: '',
     },
   });
+
+  // create a useEffect hook to set the vinDecoderKey
+  useEffect(() => {
+    const account = Array.isArray(accountValues) ? accountValues[0] : accountValues;
+    setVinDecoderKey(account?.vin_decoder_key ?? null);
+  }, [accountValues]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const account = Array.isArray(accountValues) ? accountValues[0] : accountValues;
@@ -103,7 +111,7 @@ const VinDecoderForm = ({
           />
           <Button
             type='submit'
-            disabled={isLoading && isLoadingAccount}
+            disabled={isLoading || isLoadingAccount || vinDecoderKey === null}
             className='w-full h-12 px-6 py-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white text-md font-semibold rounded-md transition duration-200'
           >
             {isLoading ? 'Decoding...' : 'Decode VIN'}
