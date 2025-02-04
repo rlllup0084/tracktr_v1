@@ -55,7 +55,8 @@ const VehicleInfoModal = ({
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
 
-  const vehicleSpecs: SpecItem[] = [
+  // Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+  const [vehicleSpecs, setVehicleSpecs] = useState<SpecItem[]>([
     {
       label: 'Vehicle Name',
       value: `${data.years?.[0]?.year ?? ''} ${data.make?.name ?? ''} ${
@@ -250,7 +251,7 @@ const VehicleInfoModal = ({
       value: `${data.drivenWheels ?? ''}`,
       valueType: 'input',
     }, // Rear-wheel drive (RWD)
-  ];
+  ]);
 
   const form = useForm<VinVehicleData>({
     resolver: zodResolver(vinVehicleDataSchema),
@@ -260,6 +261,16 @@ const VehicleInfoModal = ({
   const handleSubmit = (data: VinVehicleData) => {
     if (isEditing) {
       console.log('Edited data:', data);
+      // iterate vehicleSpecs values and compare with data
+      // if different, set the new value
+      // if same, keep the old value
+      vehicleSpecs.forEach((spec) => {
+        if (spec.label === 'Vehicle Name' && data.vehicleName && spec.value !== data.vehicleName) {
+          spec.value = data.vehicleName;
+        }
+      });
+      //  refresh renderReviewSection
+      setVehicleSpecs([...vehicleSpecs]);
       setIsEditing(false);
     } else {
       onConfirm(data);
