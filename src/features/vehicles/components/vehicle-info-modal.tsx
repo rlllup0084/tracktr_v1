@@ -258,6 +258,17 @@ const VehicleInfoModal = ({
     defaultValues: data,
   });
 
+  const updateSpecValue = (
+    specLabel: string,
+    newValue: string | undefined
+  ) => {
+    if (!newValue) return;
+    const spec = vehicleSpecs.find((s) => s.label === specLabel);
+    if (spec && spec.value !== newValue) {
+      spec.value = newValue;
+    }
+  };
+
   const handleSubmit = (data: VinVehicleData) => {
     if (isEditing) {
       console.log('Edited data:', data);
@@ -266,14 +277,6 @@ const VehicleInfoModal = ({
       // if same, keep the old value
       vehicleSpecs.forEach(() => {
         // iterate through the data object and update the spec value if it's different
-        const updateSpecValue = (specLabel: string, newValue: string | undefined) => {
-          if (!newValue) return;
-          const spec = vehicleSpecs.find(s => s.label === specLabel);
-          if (spec && spec.value !== newValue) {
-            spec.value = newValue;
-          }
-        };
-
         updateSpecValue('Vehicle Name', data.vehicleName); // vehicleName
         updateSpecValue('VIN', data.vin); // vin
         updateSpecValue('Make', data.make?.name); // maker
@@ -292,17 +295,23 @@ const VehicleInfoModal = ({
         updateSpecValue('Fuel Capacity', data.fuelCapacity?.toString()); // fuelCapacity
         updateSpecValue('MPG (City)', data.mpg?.city?.toString()); // mpgCity
         updateSpecValue('MPG (Highway)', data.mpg?.highway?.toString()); // mpgHighway
-        
+
         // Engine specs
         updateSpecValue('Engine Name', data.engineName); // engineName
         updateSpecValue('Engine Type', data.engine?.type); // engineType
         updateSpecValue('Displacement', data.engine?.displacement?.toString()); // engineDisplacement
         updateSpecValue('Horsepower', data.engine?.horsepower?.toString()); // engineHorsepower
-        updateSpecValue('RPM (Horsepower)', data.engine?.rpm?.horsepower?.toString()); // rpmHorserpower
+        updateSpecValue(
+          'RPM (Horsepower)',
+          data.engine?.rpm?.horsepower?.toString()
+        ); // rpmHorserpower
         updateSpecValue('Torque', data.engine?.torque?.toString()); // engineTorque
         updateSpecValue('RPM (Torque)', data.engine?.rpm?.torque?.toString()); // rpmTorque
-        updateSpecValue('Fuel Type', data.engine?.fuelType);  // fuelType
-        updateSpecValue('Compression Ratio', data.engine?.compressionRatio?.toString()); // compressionRatio
+        updateSpecValue('Fuel Type', data.engine?.fuelType); // fuelType
+        updateSpecValue(
+          'Compression Ratio',
+          data.engine?.compressionRatio?.toString()
+        ); // compressionRatio
         updateSpecValue('Cylinders', data.engine?.cylinder?.toString()); // Cylinder
         updateSpecValue('Total Valves', data.engine?.totalValves?.toString()); // totalValves
         updateSpecValue('Engine Configuration', data.engine?.configuration); // engineConfiguration
@@ -310,18 +319,237 @@ const VehicleInfoModal = ({
         updateSpecValue('Valve Timing', data.engine?.valve?.timing); // valveTiming
         updateSpecValue('Valve Gear', data.engine?.valve?.gear); // valveGear
         updateSpecValue('Engine Code', data.engine?.code); // engineCode
-        updateSpecValue('Manufacturer Engine Code', data.engine?.manufacturerEngineCode); // engineManufacturerCode
+        updateSpecValue(
+          'Manufacturer Engine Code',
+          data.engine?.manufacturerEngineCode
+        ); // engineManufacturerCode
 
         // Transmission specs
         updateSpecValue('Transmission Name', data.transmission?.name); // transmissionName
-        updateSpecValue('Number of Speeds', data.transmission?.numberOfSpeeds?.toString()); // numberOfSpeeds
-        updateSpecValue('Transmission Type', data.transmission?.transmissionType); // transmissionType
+        updateSpecValue(
+          'Number of Speeds',
+          data.transmission?.numberOfSpeeds?.toString()
+        ); // numberOfSpeeds
+        updateSpecValue(
+          'Transmission Type',
+          data.transmission?.transmissionType
+        ); // transmissionType
         updateSpecValue('Drivetrain', data.drivenWheels); // drivenWheels
       });
       //  refresh renderReviewSection
       setVehicleSpecs([...vehicleSpecs]);
       setIsEditing(false);
     } else {
+      // TODO: make sure that data confirmed all the fields above
+      // Update data with latest values from vehicleSpecs
+      vehicleSpecs.forEach((spec) => {
+        switch (spec.label) {
+          case 'Vehicle Name':
+            data.vehicleName = spec.value;
+            break;
+          case 'VIN':
+            data.vin = spec.value;
+            break;
+          case 'Make':
+            if (data.make) {
+              data.make.name = spec.value;
+              data.maker = spec.value;
+            }
+            break;
+          case 'Model':
+            if (data.model) {
+              data.model.name = spec.value;
+              data.vehicleModel = spec.value;
+            }
+            break;
+          case 'Year':
+            data.year = parseInt(spec.value || '0');
+            break;
+          case 'Number of Doors':
+            data.numOfDoors = spec.value;
+            break;
+          case 'Style':
+            data.styleId = spec.value;
+            break;
+          case 'Body Type':
+            data.bodyType = spec.value;
+            break;
+          case 'Trim':
+            data.trim = spec.value;
+            break;
+          case 'Vehicle Type':
+            if (data.categories) {
+              data.categories.vehicleType = spec.value;
+              data.vehicleType = spec.value;
+            }
+            break;
+          case 'Vehicle Style':
+            if (data.categories) {
+              data.categories.vehicleStyle = spec.value;
+              data.vehicleStyle = spec.value;
+            }
+            break;
+          case 'Primary Body Type':
+            if (data.categories) {
+              data.categories.primaryBodyType = spec.value;
+              data.primaryBodyType = spec.value;
+            }
+            break;
+          case 'Market Class':
+            if (data.categories) {
+              data.categories.market = spec.value;
+              data.market = spec.value;
+            }
+            break;
+          case 'Vehicle Size':
+            if (data.categories) {
+              data.categories.vehicleSize = spec.value;
+              data.vehicleSize = spec.value;
+            }
+            break;
+          case 'EPA Class':
+            if (data.categories) {
+              data.categories.epaClass = spec.value;
+              data.epaClass = spec.value;
+            }
+            break;
+          case 'Fuel Capacity':
+            data.fuelCapacity = parseFloat(spec.value || '0');
+            break;
+          case 'MPG (City)':
+            if (data.mpg) {
+              data.mpg.city = spec.value || '0';
+              data.mpgCity = spec.value || '0';
+            }
+            break;
+          case 'MPG (Highway)':
+            if (data.mpg) {
+              data.mpg.highway = spec.value || '0';
+              data.mpgHighway = spec.value || '0';
+            }
+            break;
+          case 'Engine Name':
+            data.engineName = spec.value;
+            break;
+          case 'Engine Type':
+            if (data.engine) {
+              data.engine.type = spec.value;
+              data.engineType = spec.value;
+            }
+            break;
+          case 'Displacement':
+            if (data.engine) {
+              data.engine.displacement = parseFloat(spec.value || '0');
+              data.engineDisplacement = parseFloat(spec.value || '0');
+            }
+            break;
+          case 'Horsepower':
+            if (data.engine) {
+              data.engine.horsepower = parseInt(spec.value || '0');
+              data.engineHorsepower = parseInt(spec.value || '0');
+            }
+            break;
+          case 'RPM (Horsepower)':
+            if (data.engine?.rpm) {
+              data.engine.rpm.horsepower = parseInt(spec.value || '0');
+              data.rpmHorserpower = parseInt(spec.value || '0');
+            }
+            break;
+          case 'Torque':
+            if (data.engine) {
+              data.engine.torque = parseInt(spec.value || '0');
+              data.engineTorque = parseInt(spec.value || '0');
+            }
+            break;
+          case 'RPM (Torque)':
+            if (data.engine?.rpm) {
+              data.engine.rpm.torque = parseInt(spec.value || '0');
+              data.rpmTorque = parseInt(spec.value || '0');
+            }
+            break;
+          case 'Fuel Type':
+            if (data.engine) {
+              data.engine.fuelType = spec.value;
+              data.fuelType = spec.value;
+            }
+            break;
+          case 'Compression Ratio':
+            if (data.engine) {
+              data.engine.compressionRatio = parseFloat(spec.value || '0');
+              data.compressionRatio = parseFloat(spec.value || '0');
+            }
+            break;
+          case 'Cylinders':
+            if (data.engine) {
+              data.engine.cylinder = parseInt(spec.value || '0');
+              data.Cylinder = parseInt(spec.value || '0');
+            }
+            break;
+          case 'Total Valves':
+            if (data.engine) {
+              data.engine.totalValves = parseInt(spec.value || '0');
+              data.totalValves = parseInt(spec.value || '0');
+            }
+            break;
+          case 'Engine Configuration':
+            if (data.engine) {
+              data.engine.configuration = spec.value;
+              data.engineConfiguration = spec.value;
+            }
+            break;
+          case 'Compressor Type':
+            if (data.engine) {
+              data.engine.compressorType = spec.value;
+              data.compressorType = spec.value;
+            }
+            break;
+          case 'Valve Timing':
+            if (data.engine?.valve) {
+              data.engine.valve.timing = spec.value;
+              data.valveTiming = spec.value;
+            }
+            break;
+          case 'Valve Gear':
+            if (data.engine?.valve) {
+              data.engine.valve.gear = spec.value;
+              data.valveGear = spec.value;
+            }
+            break;
+          case 'Engine Code':
+            if (data.engine) {
+              data.engine.code = spec.value;
+              data.engineCode = spec.value;
+            }
+            break;
+          case 'Manufacturer Engine Code':
+            if (data.engine) {
+              data.engine.manufacturerEngineCode = spec.value;
+              data.engineManufacturerCode = spec.value;
+            }
+            break;
+          case 'Transmission Name':
+            if (data.transmission) {
+              data.transmission.name = spec.value;
+              data.transmissionName = spec.value;
+            }
+            break;
+          case 'Number of Speeds':
+            if (data.transmission) {
+              data.transmission.numberOfSpeeds = spec.value || '0';
+              data.numberOfSpeeds = spec.value || '0';
+            }
+            break;
+          case 'Transmission Type':
+            if (data.transmission) {
+              data.transmission.transmissionType = spec.value;
+              data.transmissionType = spec.value;
+            }
+            break;
+          case 'Drivetrain':
+            data.drivenWheels = spec.value;
+            break;
+        }
+      });
       onConfirm(data);
     }
   };
