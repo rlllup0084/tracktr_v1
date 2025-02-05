@@ -32,6 +32,22 @@ export const vinVehicleDataSchema = z.object({
   vehicleSize: z.string().optional(),
   epaClass: z.string().optional(),
   engineName: z.string().max(100).optional(),
+  engineType: z.string().optional(),
+  engineDisplacement: z.string().optional(),
+  engineHorsepower: z.string().optional(),
+  rpmHorserpower: z.string().optional(),
+  engineTorque: z.string().optional(),
+  rpmTorque: z.string().optional(),
+  fuelType: z.string().optional(),
+  compressionRatio: z.string().optional(),
+  Cylinder: z.string().optional(),
+  totalValves: z.string().optional(),
+  engineConfiguration: z.string().optional(),
+  compressorType: z.string().optional(),
+  valveTiming: z.string().optional(),
+  valveGear: z.string().optional(),
+  engineCode: z.string().optional(),
+  engineManufacturerCode: z.string().optional(),
   engine: z
     .object({
       id: z.string().optional(),
@@ -65,6 +81,9 @@ export const vinVehicleDataSchema = z.object({
         .optional(),
     })
     .optional(),
+  transmissionName: z.string().optional(),
+  numberOfSpeeds: z.string().optional(),
+  transmissionType: z.string().optional(),
   transmission: z
     .object({
       id: z.string().optional(),

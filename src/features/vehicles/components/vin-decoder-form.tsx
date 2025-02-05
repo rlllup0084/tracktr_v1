@@ -131,7 +131,11 @@ const VinDecoderForm = ({
             disabled={isLoading || isLoadingAccount || vinDecoderKey === null}
             className='w-full h-12 px-6 py-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white text-md font-semibold rounded-md transition duration-200'
           >
-            {isLoading ? 'Decoding...' : 'Decode VIN'}
+            {vinDecoderKey === null 
+              ? 'Waiting for VIN Decoder Key...' 
+              : isLoading 
+                ? 'Decoding...' 
+                : 'Decode VIN'}
           </Button>
         </form>
       </Form>

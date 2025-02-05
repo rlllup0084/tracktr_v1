@@ -291,32 +291,32 @@ const VehicleInfoModal = ({
         updateSpecValue('EPA Class', data.categories?.epaClass); // epaClass
         updateSpecValue('Fuel Capacity', data.fuelCapacity?.toString()); // fuelCapacity
         updateSpecValue('MPG (City)', data.mpg?.city?.toString()); // mpgCity
-        updateSpecValue('MPG (Highway)', data.mpg?.highway?.toString()); //mpgHighway
+        updateSpecValue('MPG (Highway)', data.mpg?.highway?.toString()); // mpgHighway
         
         // Engine specs
-        updateSpecValue('Engine Name', data.engineName);
-        updateSpecValue('Engine Type', data.engine?.type);
-        updateSpecValue('Displacement', data.engine?.displacement?.toString());
-        updateSpecValue('Horsepower', data.engine?.horsepower?.toString());
-        updateSpecValue('RPM (Horsepower)', data.engine?.rpm?.horsepower?.toString());
-        updateSpecValue('Torque', data.engine?.torque?.toString());
-        updateSpecValue('RPM (Torque)', data.engine?.rpm?.torque?.toString());
-        updateSpecValue('Fuel Type', data.engine?.fuelType);
-        updateSpecValue('Compression Ratio', data.engine?.compressionRatio?.toString());
-        updateSpecValue('Cylinders', data.engine?.cylinder?.toString());
-        updateSpecValue('Total Valves', data.engine?.totalValves?.toString());
-        updateSpecValue('Engine Configuration', data.engine?.configuration);
-        updateSpecValue('Compressor Type', data.engine?.compressorType);
-        updateSpecValue('Valve Timing', data.engine?.valve?.timing);
-        updateSpecValue('Valve Gear', data.engine?.valve?.gear);
-        updateSpecValue('Engine Code', data.engine?.code);
-        updateSpecValue('Manufacturer Engine Code', data.engine?.manufacturerEngineCode);
+        updateSpecValue('Engine Name', data.engineName); // engineName
+        updateSpecValue('Engine Type', data.engine?.type); // engineType
+        updateSpecValue('Displacement', data.engine?.displacement?.toString()); // engineDisplacement
+        updateSpecValue('Horsepower', data.engine?.horsepower?.toString()); // engineHorsepower
+        updateSpecValue('RPM (Horsepower)', data.engine?.rpm?.horsepower?.toString()); // rpmHorserpower
+        updateSpecValue('Torque', data.engine?.torque?.toString()); // engineTorque
+        updateSpecValue('RPM (Torque)', data.engine?.rpm?.torque?.toString()); // rpmTorque
+        updateSpecValue('Fuel Type', data.engine?.fuelType);  // fuelType
+        updateSpecValue('Compression Ratio', data.engine?.compressionRatio?.toString()); // compressionRatio
+        updateSpecValue('Cylinders', data.engine?.cylinder?.toString()); // Cylinder
+        updateSpecValue('Total Valves', data.engine?.totalValves?.toString()); // totalValves
+        updateSpecValue('Engine Configuration', data.engine?.configuration); // engineConfiguration
+        updateSpecValue('Compressor Type', data.engine?.compressorType); // compressorType
+        updateSpecValue('Valve Timing', data.engine?.valve?.timing); // valveTiming
+        updateSpecValue('Valve Gear', data.engine?.valve?.gear); // valveGear
+        updateSpecValue('Engine Code', data.engine?.code); // engineCode
+        updateSpecValue('Manufacturer Engine Code', data.engine?.manufacturerEngineCode); // engineManufacturerCode
 
         // Transmission specs
-        updateSpecValue('Transmission Name', data.transmission?.name);
-        updateSpecValue('Number of Speeds', data.transmission?.numberOfSpeeds?.toString());
-        updateSpecValue('Transmission Type', data.transmission?.transmissionType);
-        updateSpecValue('Drivetrain', data.drivenWheels);
+        updateSpecValue('Transmission Name', data.transmission?.name); // transmissionName
+        updateSpecValue('Number of Speeds', data.transmission?.numberOfSpeeds?.toString()); // numberOfSpeeds
+        updateSpecValue('Transmission Type', data.transmission?.transmissionType); // transmissionType
+        updateSpecValue('Drivetrain', data.drivenWheels); // drivenWheels
       });
       //  refresh renderReviewSection
       setVehicleSpecs([...vehicleSpecs]);
