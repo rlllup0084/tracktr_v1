@@ -41,17 +41,19 @@ import {
 } from '@/components/custom-tabs';
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+interface VehicleInfoModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  data: VinVehicleData;
+  onConfirm: (data: VinVehicleData) => void;
+}
+
 const VehicleInfoModal = ({
   isOpen,
   onClose,
   data,
   onConfirm,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  data: VinVehicleData;
-  onConfirm: (data: VinVehicleData) => void;
-}) => {
+}: VehicleInfoModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
 

@@ -75,6 +75,8 @@ export const createVehicleSchema = z.object({
   highway_economy: z.string().max(50), // in mpg or km/l
 });
 
+export type VehicleData = z.infer<typeof createVehicleSchema>;
+
 export const createMakeSchema = z.object({
   make: z.string().nonempty({ message: 'Make is required' }).max(100),
 });

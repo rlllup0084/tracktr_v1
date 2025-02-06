@@ -21,6 +21,7 @@ import {
   parseVehicleData,
   type VinVehicleData,
 } from '../utils/parseVehicleData';
+import ProcessVehicleModal from './process-vehicle-modal';
 
 const formSchema = z.object({
   vin: z
@@ -36,6 +37,8 @@ const VinDecoderForm = ({
   const [vehicleData, setVehicleData] = useState<VinVehicleData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
+
   // create a useState hook to store the vinDecoderKey
   const [vinDecoderKey, setVinDecoderKey] = useState<string | null>(null);
 
@@ -52,6 +55,15 @@ const VinDecoderForm = ({
   const handleVehicleConfirmed = (vehicle: unknown) => {
     if (vehicle) {
       console.log('Vehicle confirmed:', vehicle);
+      // TODO: Process vehicle further for additional information before confirming it
+      setIsModalOpen(false);
+      setIsProcessModalOpen(true);
+    }
+  };
+
+  const handleProcessVehicleConfirmed = (vehicle: unknown) => {
+    if (vehicle) {
+      console.log('Processed vehicle confirmed:', vehicle);
       onVehicleConfirmed(vehicle);
       setVehicleData(null);
       form.reset();
@@ -131,11 +143,11 @@ const VinDecoderForm = ({
             disabled={isLoading || isLoadingAccount || vinDecoderKey === null}
             className='w-full h-12 px-6 py-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white text-md font-semibold rounded-md transition duration-200'
           >
-            {vinDecoderKey === null 
-              ? 'Waiting for VIN Decoder Key...' 
-              : isLoading 
-                ? 'Decoding...' 
-                : 'Decode VIN'}
+            {vinDecoderKey === null
+              ? 'Waiting for VIN Decoder Key...'
+              : isLoading
+              ? 'Decoding...'
+              : 'Decode VIN'}
           </Button>
         </form>
       </Form>
@@ -156,6 +168,14 @@ const VinDecoderForm = ({
           onClose={() => setIsModalOpen(false)}
           data={vehicleData}
           onConfirm={handleVehicleConfirmed}
+        />
+      )}
+      {vehicleData && (
+        <ProcessVehicleModal
+          isOpen={isProcessModalOpen}
+          onClose={() => setIsProcessModalOpen(false)}
+          data={vehicleData}
+          onConfirm={handleProcessVehicleConfirmed}
         />
       )}
     </div>
