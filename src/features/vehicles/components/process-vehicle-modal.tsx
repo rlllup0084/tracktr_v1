@@ -84,7 +84,7 @@ const ProcessVehicleModal = ({
             </DialogDescription>
           </div>
         </DialogHeader>
-        <div className='flex justify-center mb-10 relative'>
+        <div className='flex justify-center mb-8 relative'>
           <ul className='flex items-center list-none p-2 m-0'>
             {steps.map((step, index) => (
               <li key={index} className='relative flex flex-col items-center'>
@@ -106,7 +106,7 @@ const ProcessVehicleModal = ({
                     )}
                   </div>
                   {/* Step title */}
-                  <div className='absolute top-10 -left-[28px] w-24 text-center'>
+                  <div className='absolute top-10 -left-[30px] w-24 text-center'>
                     <span
                       className={`text-xs leading-tight block ${
                         index === currentStep
@@ -119,9 +119,9 @@ const ProcessVehicleModal = ({
                   </div>
                   {/* Connector line */}
                   {index < steps.length - 1 && (
-                    <div className='w-24 mx-2'>
+                    <div className='w-20 mx-2'>
                       <div
-                        className={`h-[1px] ${
+                        className={`h-[2px] ${
                           index < currentStep ? 'bg-green-500' : 'bg-slate-800'
                         }`}
                       />
