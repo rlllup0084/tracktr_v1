@@ -105,6 +105,18 @@ const ProcessVehicleModal = ({
                       <span className='text-sm font-medium'>{index + 1}</span>
                     )}
                   </div>
+                  {/* Step title */}
+                  <div className='absolute top-12 -left-[27px] w-24 text-center'>
+                    <span
+                      className={`text-xs leading-tight block ${
+                        index === currentStep
+                          ? 'text-primary font-medium'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      {step.title}
+                    </span>
+                  </div>
                   {/* Connector line */}
                   {index < steps.length - 1 && (
                     <div className='w-24 mx-2'>
@@ -115,16 +127,6 @@ const ProcessVehicleModal = ({
                       />
                     </div>
                   )}
-                </div>
-                {/* Step title */}
-                <div className='absolute top-12 w-24 text-center'>
-                  <span 
-                    className={`text-xs leading-tight block ${
-                      index === currentStep ? 'text-primary font-medium' : 'text-muted-foreground'
-                    }`}
-                  >
-                    {step.title}
-                  </span>
                 </div>
               </li>
             ))}
