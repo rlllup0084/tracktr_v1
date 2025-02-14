@@ -91,7 +91,7 @@ const ProcessVehicleModal = ({
                 {/* Step indicator */}
                 <div className='flex items-center'>
                   <div
-                    className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                    className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
                       index === currentStep
                         ? 'border-primary bg-primary text-primary-foreground'
                         : index < currentStep
@@ -100,13 +100,13 @@ const ProcessVehicleModal = ({
                     }`}
                   >
                     {index < currentStep ? (
-                      <CheckIcon className='h-5 w-5' />
+                      <CheckIcon className='h-4 w-4' />
                     ) : (
-                      <span className='text-sm font-medium'>{index + 1}</span>
+                      <span className='text-xs font-medium'>{index + 1}</span>
                     )}
                   </div>
                   {/* Step title */}
-                  <div className='absolute top-12 -left-[27px] w-24 text-center'>
+                  <div className='absolute top-10 -left-[28px] w-24 text-center'>
                     <span
                       className={`text-xs leading-tight block ${
                         index === currentStep
@@ -121,7 +121,7 @@ const ProcessVehicleModal = ({
                   {index < steps.length - 1 && (
                     <div className='w-24 mx-2'>
                       <div
-                        className={`h-[2px] ${
+                        className={`h-[1px] ${
                           index < currentStep ? 'bg-green-500' : 'bg-slate-800'
                         }`}
                       />
